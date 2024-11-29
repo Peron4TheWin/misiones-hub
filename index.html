@@ -25,17 +25,23 @@
       background-color: #f2f2f2;
     }
     .available {
-      background-color: #c8e6c9; 
+      background-color: #c8e6c9; /* Light green background for available missions */
     }
     .available-time {
-      color: green; 
+      color: green; /* Green color for the available time */
       font-weight: bold;
+    }
+    #utcTimer {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <h1>Misiones disponibles</h1>
-
+  <div id="utcTimer">UTC Time: --:--:--</div>
   <table id="missionsTable">
     <thead>
       <tr>
@@ -46,13 +52,15 @@
       </tr>
     </thead>
     <tbody>
+      <!-- Filtered missions will appear here -->
     </tbody>
   </table>
 
   <script>
     const csvUrl = 'https://raw.githubusercontent.com/Peron4TheWin/misiones-hub/refs/heads/main/actividades.csv';
-      const dayNames = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"];
-  
+
+    const dayNames = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"];
+
     function parseCSV(data) {
       const rows = data.trim().split('\n');
       return rows.map(row => {
@@ -65,30 +73,28 @@
         };
       });
     }
-  
+
     function getMondayBasedUTCDay(date) {
-      const day = date.getUTCDay(); 
-      return (day === 0) ? 6 : day - 1; 
+      const day = date.getUTCDay();
+      return (day === 0) ? 6 : day - 1; // Adjust so Monday = 0, Sunday = 6
     }
-  
-    // Get current UTC time and day
+
     function getCurrentUTCInfo() {
       const now = new Date();
       return {
         currentHour: now.getUTCHours(),
-        currentDay: getMondayBasedUTCDay(now) 
+        currentDay: getMondayBasedUTCDay(now)
       };
     }
-  
- 
+
     function isTimeAvailable(timeRange, currentHour) {
       let [start, end] = timeRange;
       if (end < start) {
-        end += 24;
+        end += 24; // Adjust for time ranges that span midnight
       }
       return currentHour >= start && currentHour < end;
     }
-  
+
     function isMissionAvailable(mission, currentHour, currentDay) {
       if (mission.days.includes(99)) {
         return mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
@@ -96,32 +102,31 @@
       return mission.days.includes(currentDay) &&
         mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
     }
-  
+
     function displayAvailableMissions(data) {
       const missions = parseCSV(data);
       const { currentHour, currentDay } = getCurrentUTCInfo();
       const tableBody = document.querySelector('#missionsTable tbody');
-      tableBody.innerHTML = ''; 
-  
+      tableBody.innerHTML = '';
+
       missions.forEach(mission => {
         const row = document.createElement('tr');
         const isAvailable = isMissionAvailable(mission, currentHour, currentDay);
-        
+
         if (isAvailable) {
           row.classList.add('available');
         }
-  
+
         const highlightedTimes = mission.times.map(timeRange => {
-          const isCurrentTimeAvailable = isTimeAvailable(timeRange, currentHour) && 
-                                         (mission.days.includes(currentDay) || mission.days.includes(99)); 
-          
-          return isCurrentTimeAvailable 
-            ? `<span class="available-time">${timeRange[0]}-${timeRange[1]}</span>` 
+          const isCurrentTimeAvailable = isTimeAvailable(timeRange, currentHour) &&
+                                         (mission.days.includes(currentDay) || mission.days.includes(99));
+          return isCurrentTimeAvailable
+            ? `<span class="available-time">${timeRange[0]}-${timeRange[1]}</span>`
             : `${timeRange[0]}-${timeRange[1]}`;
         }).join(', ');
-  
+
         const availableDays = mission.days.includes(99) ? 'Todos los dias' : mission.days.map(day => dayNames[day]).join(', ');
-  
+
         row.innerHTML = `
           <td>${mission.mission}</td>
           <td>${highlightedTimes}</td>
@@ -131,20 +136,31 @@
         tableBody.appendChild(row);
       });
     }
-  
-    // Fetch the CSV data and display available missions
+
     function fetchAndDisplayMissions() {
       fetch(csvUrl)
-        .then(response => response.text()) // Parse the response as text
+        .then(response => response.text())
         .then(data => {
           displayAvailableMissions(data);
         })
         .catch(error => console.error('Error fetching the CSV file:', error));
     }
-  
-    // Run the fetch function on page load
-    window.onload = fetchAndDisplayMissions;
+
+    function updateUTCTimer() {
+      const now = new Date();
+      const utcTimeString = now.toUTCString().split(' ')[4]; // Extract time part from UTC string
+      document.getElementById('utcTimer').textContent = `UTC Time: ${utcTimeString}`;
+    }
+
+    function startUTCTimer() {
+      updateUTCTimer();
+      setInterval(updateUTCTimer, 1000); // Update every second
+    }
+
+    window.onload = function () {
+      startUTCTimer();
+      fetchAndDisplayMissions();
+    };
   </script>
-  
 </body>
 </html>
