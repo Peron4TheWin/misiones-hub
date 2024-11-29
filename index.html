@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missions Availability</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .available {
+      background-color: #c8e6c9; /* Light green background for available missions */
+    }
+    .available-time {
+      color: green; /* Green color for the available time */
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Misiones disponibles</h1>
+
+  <table id="missionsTable">
+    <thead>
+      <tr>
+        <th>Mission</th>
+        <th>Times</th>
+        <th>Days</th>
+        <th>Grupo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Filtered missions will appear here -->
+    </tbody>
+  </table>
+
+  <script>
+    // CSV Data (This would be fetched or loaded from an external file in real use)
+    const csvData = `
+Roba un vehiculo;1-3,15-17,17-19,19-12;1,2;grupo
+Mision de trafico ilegal;9-12,17-20,22-23;99;grupo
+Robo a negocio;0-11,12-23;0,2,4,6;grupo
+Lancha encallada;2-4,16-18,18-20,20-22;0,1,4,6;grupo
+Elaboracion de metanfetamina (dia 1);7-23;0;grupo
+Elaboracion de metanfetamina (dia 2);7-23;2;grupo
+Elaboracion de metanfetamina (dia 3);7-23;4;grupo
+Dia de la recompensa;7-23;6;grupo
+Reparto aereo;9-12,17-20,22-23;1,4;grupo
+Busqueda de contenedores;2-4,18-20,20-22,22-23;99;grupo
+Roba un vehiculo;1-3,13-15,17-18,19-20,20-22,22-23;99;pandilla
+Roba la camioneta de pintura;2-4,9-11,15-17,21-22;99;pandilla
+Robo a negocio;0-11,12-23;0,2,4,6;pandilla
+Busqueda de contenedores;2-4,9-11,15-17,21-22;0,2,4,5,6;pandilla
+Cuidado de la plantacion (dia 1);7-23;0;pandilla
+Cuidado de la plantacion (dia 2);7-23;2;pandilla
+Cuidado de la plantacion (dia 3);7-23;4;pandilla
+Dia de la recompensa;7-23;6;pandilla
+mision de trafico ilegal avanzado;16-18,21-22;99;pandilla
+Mision de trafico ilegal;14-15,18-19,22-23;0,4,6;motero
+Trafico naval;14-15,18-19,22-23;1,3,5;motero
+Robo a almacen;0-11,12-23;99;motero
+Robo a negocio;0-11,12-23;99;motero
+Robo a motocicleta;1-3,13-15,17-18,19-20,20-22,22-23;99;motero
+Busqueda de contenedores;2-4,9-11,15-17,21-22;99;motero
+    `;
+
+    // Days of the week mapping (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const dayNames = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"];
+
+    // Function to parse the CSV string into a structured array of objects
+    function parseCSV(data) {
+      const rows = data.trim().split('\n');
+      return rows.map(row => {
+        const [mission, times, days, group] = row.split(';');
+        return {
+          mission,
+          times: times.split(',').map(range => range.split('-').map(Number)),
+          days: days.split(',').map(Number),
+          group
+        };
+      });
+    }
+
+    // Get current UTC time and day
+    function getCurrentUTCInfo() {
+      const now = new Date();
+      return {
+        currentHour: now.getUTCHours(),
+        currentDay: now.getUTCDay() // 0-6 (Sunday-Saturday)
+      };
+    }
+
+    // Check if a time range is available for the current hour
+    function isTimeAvailable(timeRange, currentHour) {
+      let [start, end] = timeRange;
+      if (end < start) {
+        end += 24; // Adjust for time ranges that span midnight
+      }
+      return currentHour >= start && currentHour < end;
+    }
+
+    // Check if a mission is available based on the current time and day
+    function isMissionAvailable(mission, currentHour, currentDay) {
+      // If day is 99, the mission is available every day
+      if (mission.days.includes(99)) {
+        return mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
+      }
+      // Otherwise, check if currentDay is in the available days
+      return mission.days.includes(currentDay) &&
+        mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
+    }
+
+    // Display the missions that are available right now
+    function displayAvailableMissions() {
+      const missions = parseCSV(csvData);
+      const { currentHour, currentDay } = getCurrentUTCInfo();
+      const tableBody = document.querySelector('#missionsTable tbody');
+      tableBody.innerHTML = ''; // Clear any previous results
+
+      missions.forEach(mission => {
+        const row = document.createElement('tr');
+        const isAvailable = isMissionAvailable(mission, currentHour, currentDay);
+        
+        // Mark the mission as available by adding the 'available' class
+        if (isAvailable) {
+          row.classList.add('available');
+        }
+
+        // Highlight available time ranges in green (now includes the check for both day and time)
+        const highlightedTimes = mission.times.map(timeRange => {
+          const isCurrentTimeAvailable = isTimeAvailable(timeRange, currentHour) && 
+                                         (mission.days.includes(currentDay) || mission.days.includes(99)); // Check for 99 (everyday)
+          
+          return isCurrentTimeAvailable 
+            ? `<span class="available-time">${timeRange[0]}-${timeRange[1]}</span>` 
+            : `${timeRange[0]}-${timeRange[1]}`;
+        }).join(', ');
+
+        // Convert the numeric days to named days
+        const availableDays = mission.days.includes(99) ? 'Todos los dias' : mission.days.map(day => dayNames[day]).join(', ');
+
+        // Populate the row
+        row.innerHTML = `
+          <td>${mission.mission}</td>
+          <td>${highlightedTimes}</td>
+          <td>${availableDays}</td>
+          <td>${mission.group}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Run the display function on page load
+    window.onload = displayAvailableMissions;
+  </script>
+</body>
+</html>
