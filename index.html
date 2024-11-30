@@ -141,14 +141,14 @@
       tableBody.innerHTML = '';
 
       missionsData.forEach(mission => {
-        if (filterGroup !== 'all' && mission.group !== filterGroup) {
-          return; // Skip missions that don't match the group filter
+        if (filterGroup !== 'all' && mission.group.replace(/[\n\r]/g, "") !== filterGroup) {
+          return; 
         }
 
         if (filterDay !== 'all') {
           const targetDay = filterDay === 'today' ? currentDay : parseInt(filterDay);
           if (!mission.days.includes(targetDay) && !mission.days.includes(99)) {
-            return; // Skip missions that don't match the day filter
+            return;
           }
         }
 
