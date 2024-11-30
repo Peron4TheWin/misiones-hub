@@ -40,9 +40,10 @@
       font-size: 18px;
       font-weight: bold;
     }
-    #groupFilter {
+    #groupFilter, #dayFilter {
       font-size: 16px;
       padding: 5px;
+      margin-left: 10px;
     }
   </style>
 </head>
@@ -50,12 +51,27 @@
   <h1>Misiones disponibles</h1>
   <div id="filters">
     <div id="utcTimer">UTC Time: --:--:--</div>
-    <select id="groupFilter">
-      <option value="all">Todos los grupos</option>
-      <option value="grupo">Grupo</option>
-      <option value="pandilla">Pandilla</option>
-      <option value="motero">Motero</option>
-    </select>
+    <div>
+      <label for="groupFilter">Grupo:</label>
+      <select id="groupFilter">
+        <option value="all">Todos los grupos</option>
+        <option value="grupo">Grupo</option>
+        <option value="pandilla">Pandilla</option>
+        <option value="motero">Motero</option>
+      </select>
+      <label for="dayFilter">Dia:</label>
+      <select id="dayFilter">
+        <option value="all">Todos los dias</option>
+        <option value="today">Hoy</option>
+        <option value="0">Lunes</option>
+        <option value="1">Martes</option>
+        <option value="2">Miercoles</option>
+        <option value="3">Jueves</option>
+        <option value="4">Viernes</option>
+        <option value="5">Sabado</option>
+        <option value="6">Domingo</option>
+      </select>
+    </div>
   </div>
   <table id="missionsTable">
     <thead>
@@ -74,7 +90,7 @@
   <script>
     const csvUrl = 'https://raw.githubusercontent.com/Peron4TheWin/misiones-hub/refs/heads/main/actividades.csv';
 
-    const dayNames = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"];
+    const dayNames = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
     let missionsData = []; // To store fetched missions data
 
     function parseCSV(data) {
@@ -119,14 +135,21 @@
         mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
     }
 
-    function displayAvailableMissions(filterGroup = 'all') {
+    function displayAvailableMissions(filterGroup = 'all', filterDay = 'all') {
       const { currentHour, currentDay } = getCurrentUTCInfo();
       const tableBody = document.querySelector('#missionsTable tbody');
       tableBody.innerHTML = '';
 
       missionsData.forEach(mission => {
-        if (filterGroup !== 'all' && mission.group.replace(/[\n\r]/g, "") !== filterGroup) {
-          return;
+        if (filterGroup !== 'all' && mission.group !== filterGroup) {
+          return; // Skip missions that don't match the group filter
+        }
+
+        if (filterDay !== 'all') {
+          const targetDay = filterDay === 'today' ? currentDay : parseInt(filterDay);
+          if (!mission.days.includes(targetDay) && !mission.days.includes(99)) {
+            return; // Skip missions that don't match the day filter
+          }
         }
 
         const row = document.createElement('tr');
@@ -160,8 +183,8 @@
       fetch(csvUrl)
         .then(response => response.text())
         .then(data => {
-          missionsData = parseCSV(data); // Save parsed data to the global variable
-          displayAvailableMissions(); // Display all missions initially
+          missionsData = parseCSV(data);
+          displayAvailableMissions();
         })
         .catch(error => console.error('Error fetching the CSV file:', error));
     }
@@ -177,19 +200,25 @@
       setInterval(updateUTCTimer, 1000);
     }
 
-    // Filter missions by group
-    function setupGroupFilter() {
+    // Set up filters
+    function setupFilters() {
       const groupFilter = document.getElementById('groupFilter');
-      groupFilter.addEventListener('change', () => {
+      const dayFilter = document.getElementById('dayFilter');
+
+      function applyFilters() {
         const selectedGroup = groupFilter.value;
-        displayAvailableMissions(selectedGroup);
-      });
+        const selectedDay = dayFilter.value;
+        displayAvailableMissions(selectedGroup, selectedDay);
+      }
+
+      groupFilter.addEventListener('change', applyFilters);
+      dayFilter.addEventListener('change', applyFilters);
     }
 
     window.onload = function () {
       startUTCTimer();
       fetchAndDisplayMissions();
-      setupGroupFilter();
+      setupFilters();
     };
   </script>
 </body>
