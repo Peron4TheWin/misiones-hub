@@ -88,10 +88,17 @@
   </table>
 
   <script>
-    const csvUrl = 'https://raw.githubusercontent.com/Peron4TheWin/misiones-hub/refs/heads/main/actividades.csv';
-
-    const dayNames = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
-    let missionsData = []; // To store fetched missions data
+    const csvUrl="actividades.csv";
+    const dayNames = {
+      lun: "Lunes",
+      mar: "Martes",
+      mie: "Miércoles",
+      jue: "Jueves",
+      vie: "Viernes",
+      sab: "Sábado",
+      dom: "Domingo"
+    };
+    const dayAbbreviations = Object.keys(dayNames); // ["lun", "mar", "mie", ...]
 
     function parseCSV(data) {
       const rows = data.trim().split('\n');
@@ -100,25 +107,26 @@
         return {
           mission,
           times: times.split(',').map(range => range.split('-').map(Number)),
-          days: days.split(',').map(Number),
+          days: days.split(',').map(day => day.trim()), // Parse day abbreviations
           group
         };
       });
     }
 
-    function getMondayBasedUTCDay(date) {
-      const day = date.getUTCDay();
-      return (day === 0) ? 6 : day - 1;
-    }
-
-    function getCurrentUTCInfo() {
+    function getCurrentUTCDay() {
       const now = new Date();
-      return {
-        currentHour: now.getUTCHours(),
-        currentDay: getMondayBasedUTCDay(now)
-      };
+      const dayIndex = now.getUTCDay(); // 0 for Sunday, 1 for Monday, etc.
+      const abbreviation = dayAbbreviations[(dayIndex + 6) % 7]; // Adjust to make Monday (lun) the first day
+      return abbreviation;
     }
 
+    function isMissionAvailable(mission, currentHour, currentDay) {
+      if (mission.days.includes("todos")) { // Use "todos" for missions available every day
+        return mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
+      }
+      return mission.days.includes(currentDay) &&
+              mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
+    }
     function isTimeAvailable(timeRange, currentHour) {
       let [start, end] = timeRange;
       if (end < start) {
@@ -126,28 +134,32 @@
       }
       return currentHour >= start && currentHour < end;
     }
-
-    function isMissionAvailable(mission, currentHour, currentDay) {
-      if (mission.days.includes(99)) {
-        return mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
-      }
-      return mission.days.includes(currentDay) &&
-        mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
+    function getCurrentUTCInfo() {
+      const now = new Date();
+      return {
+        currentHour: now.getUTCHours(),
+        currentDay: getMondayBasedUTCDay(now)
+      };
+    }
+    function getMondayBasedUTCDay(date) {
+      const day = date.getUTCDay();
+      return (day === 0) ? 6 : day - 1;
     }
 
     function displayAvailableMissions(filterGroup = 'all', filterDay = 'all') {
-      const { currentHour, currentDay } = getCurrentUTCInfo();
+      const { currentHour } = getCurrentUTCInfo();
+      const currentDay = getCurrentUTCDay();
       const tableBody = document.querySelector('#missionsTable tbody');
       tableBody.innerHTML = '';
 
       missionsData.forEach(mission => {
         if (filterGroup !== 'all' && mission.group.replace(/[\n\r]/g, "") !== filterGroup) {
-          return; 
+          return;
         }
 
         if (filterDay !== 'all') {
-          const targetDay = filterDay === 'today' ? currentDay : parseInt(filterDay);
-          if (!mission.days.includes(targetDay) && !mission.days.includes(99)) {
+          const targetDay = filterDay === 'today' ? currentDay : filterDay;
+          if (!mission.days.includes(targetDay) && !mission.days.includes("todos")) {
             return;
           }
         }
@@ -161,22 +173,43 @@
 
         const highlightedTimes = mission.times.map(timeRange => {
           const isCurrentTimeAvailable = isTimeAvailable(timeRange, currentHour) &&
-                                         (mission.days.includes(currentDay) || mission.days.includes(99));
+                  (mission.days.includes(currentDay) || mission.days.includes("todos"));
           return isCurrentTimeAvailable
-            ? `<span class="available-time">${timeRange[0]}-${timeRange[1]}</span>`
-            : `${timeRange[0]}-${timeRange[1]}`;
+                  ? `<span class="available-time">${timeRange[0]}-${timeRange[1]}</span>`
+                  : `${timeRange[0]}-${timeRange[1]}`;
         }).join(', ');
 
-        const availableDays = mission.days.includes(99) ? 'Todos los dias' : mission.days.map(day => dayNames[day]).join(', ');
+        const availableDays = mission.days.includes("todos") ? 'Todos los días' : mission.days.map(day => dayNames[day]).join(', ');
 
         row.innerHTML = `
-          <td>${mission.mission}</td>
-          <td>${highlightedTimes}</td>
-          <td>${availableDays}</td>
-          <td>${mission.group}</td>
-        `;
+                <td>${mission.mission}</td>
+                <td>${highlightedTimes}</td>
+                <td>${availableDays}</td>
+                <td>${mission.group}</td>
+            `;
         tableBody.appendChild(row);
       });
+    }
+
+    // Update day filter options
+    function setupFilters() {
+      const dayFilter = document.getElementById('dayFilter');
+      dayFilter.innerHTML = `
+            <option value="all">Todos los días</option>
+            <option value="today">Hoy</option>
+            ${dayAbbreviations.map(abbreviation => `<option value="${abbreviation}">${dayNames[abbreviation]}</option>`).join('')}
+        `;
+
+      const groupFilter = document.getElementById('groupFilter');
+
+      function applyFilters() {
+        const selectedGroup = groupFilter.value;
+        const selectedDay = dayFilter.value;
+        displayAvailableMissions(selectedGroup, selectedDay);
+      }
+
+      groupFilter.addEventListener('change', applyFilters);
+      dayFilter.addEventListener('change', applyFilters);
     }
 
     function fetchAndDisplayMissions() {
@@ -201,19 +234,6 @@
     }
 
     // Set up filters
-    function setupFilters() {
-      const groupFilter = document.getElementById('groupFilter');
-      const dayFilter = document.getElementById('dayFilter');
-
-      function applyFilters() {
-        const selectedGroup = groupFilter.value;
-        const selectedDay = dayFilter.value;
-        displayAvailableMissions(selectedGroup, selectedDay);
-      }
-
-      groupFilter.addEventListener('change', applyFilters);
-      dayFilter.addEventListener('change', applyFilters);
-    }
 
     window.onload = function () {
       startUTCTimer();
