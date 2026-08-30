@@ -18,9 +18,18 @@ Cuidado de la plantacion (dia 2);7-23;mie;pandilla
 Cuidado de la plantacion (dia 3);7-23;vie;pandilla
 Dia de la recompensa;7-23;dom;pandilla
 mision de trafico ilegal avanzado;16-18,21-22;todos;pandilla
-Mision de trafico ilegal;14-15,18-19,22-23;lun,mie,vie,dom;motero
-Trafico naval;14-15,18-19,22-23;mar,jue;motero
+Mision de trafico ilegal;14-15,18-19,22-23;todos;motero
+Trafico naval;14-15,18-19,22-23;mar,jue,sab;motero
 Robo a almacen;0-11,12-23;todos;motero
-Robo a negocio;0-11,12-23;lun,mie,vie,dom;motero
+Robo a negocio;0-11,12-23;todos;motero
 Robo a motocicleta;1-3,13-15,17-18,19-20,20-22,22-23;todos;motero
 Busqueda de contenedores;2-4,9-11,15-17,21-22;todos;motero
+Reparto de quimicos;17-18;mar,jue;motero
+Mision de trafico ilegal (Avanzado);16-18,21-22;todos;motero
+Trafico naval (Avanzado);16-18,21-22;mar,jue,sab;motero
+Arrasa con sus vehiculos;19-20,22-23;todos;motero
+Mantenimiento de maquinas de lavado;21-22;todos;motero
+Trafico multiple;21-22;todos;motero
+Trafico de organos;21-23;mar;motero
+Mantenimiento de secuestrado (NPC);16-23;lun;motero
+Busqueda acuatica;19-20;todos;motero
