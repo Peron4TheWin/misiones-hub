@@ -1,245 +1,1086 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Missions Availability</title>
+  <title>GTAHub - Panel de Misiones y Actividades</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: #151c2e;
+      --bg-card-hover: #1c263d;
+      --border-color: #243049;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      --success: #22c55e;
+      --success-glow: rgba(34, 197, 94, 0.25);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --motero: #f97316;
+      --pandilla: #10b981;
+      --grupo: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 25px;
+      background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
+      padding: 20px 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .header-info h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.5px;
+    }
+    .header-info h1 span {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-info p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .clock-box {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      padding: 10px 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .clock-icon {
+      color: var(--primary);
+      font-size: 20px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .clock-text {
+      font-family: 'Consolas', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .clock-day {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* STATS STRIP */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .stat-card-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 2px;
+    }
+    .stat-card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .icon-active { background: var(--success-glow); color: var(--success); }
+    .icon-total { background: var(--primary-glow); color: var(--primary); }
+    .icon-motero { background: rgba(249, 115, 22, 0.2); color: var(--motero); }
+    .icon-pandilla { background: rgba(16, 185, 129, 0.2); color: var(--pandilla); }
+
+    /* CONTROLS BAR */
+    .controls-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 260px;
+    }
+    .search-box input {
+      width: 100%;
+      background: #0b0f19;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px 10px 40px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    select {
+      background: #0b0f19;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 16px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+    select:focus { border-color: var(--primary); }
+
+    .view-toggle {
+      display: flex;
+      background: #0b0f19;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .btn-view {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-view.active {
+      background: var(--primary);
+      color: #0b0f19;
+      font-weight: 700;
+    }
+
+    /* GRID VIEW */
+    .missions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .mission-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .mission-card:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .mission-card.is-active {
+      border-color: var(--success);
+      box-shadow: 0 0 20px var(--success-glow);
+    }
+
+    .card-banner {
+      height: 140px;
+      position: relative;
+      background: #0f172a;
+      overflow: hidden;
+    }
+    .card-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .mission-card:hover .card-banner img {
+      transform: scale(1.05);
+    }
+    .card-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0.2) 0%, rgba(21,28,46,0.95) 100%);
+    }
+
+    .status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+    }
+    .status-active {
+      background: rgba(34, 197, 94, 0.9);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+    }
+    .status-next {
+      background: rgba(245, 158, 11, 0.9);
+      color: #fff;
+    }
+    .status-inactive {
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .group-pill {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pill-motero { background: rgba(249, 115, 22, 0.9); color: #fff; }
+    .pill-pandilla { background: rgba(16, 185, 129, 0.9); color: #fff; }
+    .pill-grupo { background: rgba(139, 92, 246, 0.9); color: #fff; }
+
+    .card-body {
+      padding: 16px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .req-box {
+      background: #0f172a;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #fbbf24;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .req-box i { margin-top: 2px; }
+
+    .schedule-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      background: rgba(15,23,42,0.5);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .schedule-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .schedule-label {
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .schedule-val {
+      font-family: 'Consolas', monospace;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .schedule-highlight {
+      color: var(--success) !important;
+      font-weight: 800;
+    }
+
+    .points-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    /* TABLE VIEW */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow-x: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: none;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 8px;
       text-align: left;
+      font-size: 13px;
     }
     th {
-      background-color: #f2f2f2;
+      background: #0f172a;
+      color: var(--primary);
+      padding: 14px 18px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
     }
-    .available {
-      background-color: #c8e6c9; /* Light green background for available missions */
+    td {
+      padding: 12px 18px;
+      border-bottom: 1px solid #1e293b;
+      vertical-align: middle;
     }
-    .available-time {
-      color: green; /* Green color for the available time */
-      font-weight: bold;
+    tr.tr-active {
+      background: rgba(34, 197, 94, 0.08);
     }
-    #filters {
-      margin-bottom: 20px;
+    tr:hover {
+      background: rgba(56, 189, 248, 0.04);
+    }
+    .tbl-img {
+      width: 50px;
+      height: 35px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #0f172a;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
     }
-    #utcTimer {
-      font-size: 18px;
-      font-weight: bold;
+    .modal-close:hover { color: #fff; border-color: var(--primary); }
+
+    .loot-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
     }
-    #groupFilter, #dayFilter {
-      font-size: 16px;
-      padding: 5px;
-      margin-left: 10px;
+    .loot-item {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 12px;
+      color: var(--border-color);
     }
   </style>
 </head>
 <body>
-  <h1>Misiones disponibles</h1>
-  <div id="filters">
-    <div id="utcTimer">UTC Time: --:--:--</div>
-    <div>
-      <label for="groupFilter">Grupo:</label>
-      <select id="groupFilter">
-        <option value="all">Todos los grupos</option>
-        <option value="grupo">Grupo</option>
-        <option value="pandilla">Pandilla</option>
-        <option value="motero">Motero</option>
-      </select>
-      <label for="dayFilter">Dia:</label>
-      <select id="dayFilter">
-        <option value="all">Todos los dias</option>
-        <option value="today">Hoy</option>
-        <option value="0">Lunes</option>
-        <option value="1">Martes</option>
-        <option value="2">Miercoles</option>
-        <option value="3">Jueves</option>
-        <option value="4">Viernes</option>
-        <option value="5">Sabado</option>
-        <option value="6">Domingo</option>
-      </select>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-info">
+      <h1><i class="fa-solid fa-crosshairs"></i> GTAHub <span>Actividades & Misiones</span></h1>
+      <p>Panel en tiempo real de horarios, requisitos, recompensas y disponibilidad</p>
+    </div>
+    <div class="clock-box">
+      <i class="fa-solid fa-clock clock-icon"></i>
+      <div>
+        <div class="clock-text" id="utcClock">--:--:--</div>
+        <div class="clock-day" id="utcDayText">UTC TIME</div>
+      </div>
     </div>
   </div>
-  <table id="missionsTable">
-    <thead>
-      <tr>
-        <th>Mission</th>
-        <th>Times</th>
-        <th>Days</th>
-        <th>Grupo</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Filtered missions will appear here -->
-    </tbody>
-  </table>
 
-  <script>
-    const csvUrl="actividades.csv";
-    const dayNames = {
-      lun: "Lunes",
-      mar: "Martes",
-      mie: "Miércoles",
-      jue: "Jueves",
-      vie: "Viernes",
-      sab: "Sábado",
-      dom: "Domingo"
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stat-card">
+      <div>
+        <div class="stat-card-title">Disponibles Ahora</div>
+        <div class="stat-card-val" id="statActive" style="color: var(--success);">0</div>
+      </div>
+      <div class="stat-card-icon icon-active"><i class="fa-solid fa-bolt"></i></div>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="stat-card-title">Total de Misiones</div>
+        <div class="stat-card-val" id="statTotal">0</div>
+      </div>
+      <div class="stat-card-icon icon-total"><i class="fa-solid fa-list-check"></i></div>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="stat-card-title">Misiones Moteros</div>
+        <div class="stat-card-val" id="statMotero" style="color: var(--motero);">0</div>
+      </div>
+      <div class="stat-card-icon icon-motero"><i class="fa-solid fa-motorcycle"></i></div>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="stat-card-title">Misiones Pandillas</div>
+        <div class="stat-card-val" id="statPandilla" style="color: var(--pandilla);">0</div>
+      </div>
+      <div class="stat-card-icon icon-pandilla"><i class="fa-solid fa-cannabis"></i></div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-bar">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Buscar por misión, ítem, requisito..." oninput="render()">
+    </div>
+
+    <div class="filter-group">
+      <select id="filterStatus" onchange="render()">
+        <option value="all">⚡ Todo el estado</option>
+        <option value="active">🟢 Solo Disponibles Ahora</option>
+        <option value="today">📅 Abren Hoy</option>
+      </select>
+
+      <select id="filterGroup" onchange="render()">
+        <option value="all">👥 Todas las Organizaciones</option>
+        <option value="motero">🏍️ Motero (MC)</option>
+        <option value="pandilla">🌿 Pandilla</option>
+        <option value="grupo">🏢 Grupos</option>
+      </select>
+
+      <select id="filterDay" onchange="render()">
+        <option value="today">📅 Día: Hoy</option>
+        <option value="all">Todos los días</option>
+        <option value="lun">Lunes</option>
+        <option value="mar">Martes</option>
+        <option value="mie">Miércoles</option>
+        <option value="jue">Jueves</option>
+        <option value="vie">Viernes</option>
+        <option value="sab">Sábado</option>
+        <option value="dom">Domingo</option>
+      </select>
+
+      <div class="view-toggle">
+        <button class="btn-view active" id="btnGrid" onclick="setView('grid')"><i class="fa-solid fa-table-cells-large"></i> Cards</button>
+        <button class="btn-view" id="btnTable" onclick="setView('table')"><i class="fa-solid fa-table-list"></i> Tabla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="missions-grid" id="missionsGrid"></div>
+
+  <div class="table-container" id="tableContainer">
+    <table>
+      <thead>
+        <tr>
+          <th>Foto</th>
+          <th>Misión</th>
+          <th>Organización</th>
+          <th>Estado Actual</th>
+          <th>Horarios</th>
+          <th>Días Disponibles</th>
+          <th>Requisitos</th>
+          <th>Puntos</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- DETAILS MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<script>
+  // METADATA DATABASE (Imágenes, Requisitos, Puntos, Descripciones y Recompensas)
+  const MISSION_META = {
+    "Mision de trafico ilegal": {
+      img: "https://cdn.gtahub.gg/ui/mission-mc2.jpg",
+      pts: 15,
+      req: "Vehículo rápido para huida y entrega",
+      desc: "Deberás ir en búsqueda de la carga, encontrarla lo más rápido para tomarla, llevarla a salvo hasta su punto de entrega y luego reclamar la recompensa que lleve dentro.",
+      loot: ["Balas de Pistola", "Cargador ampliado", "Cargador de tambor", "Empuñadura", "Hojas de Coca", "Kit de pintura", "Linterna táctica", "Mira compacta", "Peróxido de hidrógeno", "Pistola de combate", "Propileno", "Silenciador"]
+    },
+    "Trafico naval": {
+      img: "https://cdn.gtahub.gg/ui/mission-naval.jpg",
+      pts: 3,
+      req: "Búsqueda costera y navegación",
+      desc: "Deberás ir en búsqueda de una lancha, encontrarla lo antes posible y llevarla hasta el punto de entrega.",
+      loot: ["Balas de Pistola", "Cargador ampliado", "Cargador de tambor", "Filtro para droga", "Hojas de Coca", "Kit de pintura", "Pistola de combate", "Pistola vintage", "Planta de peyotes", "Propileno", "Silenciador"]
+    },
+    "Robo a almacen": {
+      img: "https://cdn.gtahub.gg/ui/misionrobo2.png",
+      pts: 3,
+      req: "Planos arquitectónicos",
+      desc: "Dirígete a un almacén al cual puedes ingresar para robar lo que encuentres de valor en su interior para luego venderlo y obtener tu ganancia.",
+      loot: ["Televisor LCD", "Torre de PC", "Microondas", "Reloj de oro", "Reloj de plata", "Collar de perlas", "Joyero", "Pistola vintage", "Navaja", "Balas de Pistola"]
+    },
+    "Robo a negocio": {
+      img: "https://cdn.gtahub.gg/missions/robbusiness.png",
+      pts: 7,
+      req: "Tablet + Martillo + Plano arquitectónico",
+      desc: "Dirígete a un negocio a la cual puedes ingresar para robar, lo que encuentres de valor en su interior puedes venderlo y obtener ganancias.",
+      loot: ["Maletín con joyería", "Caja de laptop", "Caja de teléfono", "Caja de televisión", "Caja de champagne", "Caja de Redwood", "Caja de Sinsimito", "Pendrive", "Mostrador de anillos"]
+    },
+    "Robo a motocicleta": {
+      img: "https://cdn.gtahub.gg/missions/robmotorbike.png",
+      pts: 1,
+      req: "Conducir con precaución (no romper la moto)",
+      desc: "Deberás ir en búsqueda de una moto para robarla y luego entregarla a un contacto de venta rápida. Si rompes el vehículo el contacto no te dará el dinero.",
+      loot: ["$1,500 en efectivo", "Cargador ampliado", "Cargador de tambor", "Empuñadura", "Kit de pintura", "Linterna táctica", "Mira compacta", "Silenciador"]
+    },
+    "Busqueda de contenedores": {
+      img: "https://cdn.gtahub.gg/missions/searchcontainer.png",
+      pts: 10,
+      req: "Un taladro",
+      desc: "Deberás ir en búsqueda de mercancía camuflada entre contenedores. Hazte con su contenido lo antes posible con el taladro.",
+      loot: ["Balas de Pistola", "Gas butano", "Hojas de Coca", "Peróxido de hidrógeno", "Propileno", "Químicos cristalizados", "Cargador de tambor", "Silenciador"]
+    },
+    "Reparto de quimicos": {
+      img: "https://cdn.gtahub.gg/missions/chemicals.png",
+      pts: 10,
+      req: "Tarro mezcla/pintura (Pandilla) + Hojas coca (MC) + Yodo/Gas butano (Grupos)",
+      desc: "El contacto se ha quedado sin químicos para la producción. Consigue los 3 tipos de productos comprándolos a otras organizaciones y llévalos al punto.",
+      loot: ["$2,000 en efectivo", "Cargador ampliado", "Cargador de tambor", "Empuñadura", "Kit de pintura", "Linterna táctica", "Mira compacta", "Silenciador"]
+    },
+    "Mision de trafico ilegal (Avanzado)": {
+      img: "https://cdn.gtahub.gg/ui/mission-mco2.jpg",
+      pts: 2,
+      req: "Actividad avanzada de Organización",
+      desc: "Búsqueda y entrega de carga pesada avanzada de alto valor. Desbloqueada por nivel de organización con mejores recompensas.",
+      loot: ["Balas de Escopeta", "Balas de Subfusil", "Balas de Pistola", "Caja plástica de munición", "Hacha de combate", "Jeringa de Heroína", "Machete", "Pistola de combate", "Tarjeta de acceso"]
+    },
+    "Trafico naval (Avanzado)": {
+      img: "https://cdn.gtahub.gg/ui/mission-naval.jpg",
+      pts: 5,
+      req: "Actividad avanzada de Organización",
+      desc: "Búsqueda y extracción de lancha rápida con cargamento militar y armamento especial.",
+      loot: ["USP Compact", "Pistola Compacta", "Balas de Asalto", "Balas de Subfusil", "Bismuto", "Bolsa de Éxtasis", "Caja de municiones", "Gas butano", "Hacha de combate", "Scanner de área"]
+    },
+    "Arrasa con sus vehiculos": {
+      img: "https://cdn.gtahub.gg/missions/missionQuemar.png",
+      pts: 10,
+      req: "3x Bidones de combustible (Gasolinera)",
+      desc: "Encuentra las ubicaciones de los coches enemigos señalados y redúcelos a cenizas usando bidones de nafta.",
+      loot: ["$2,200 en efectivo", "Cargador ampliado", "Cargador de tambor", "Empuñadura", "Kit de pintura", "Linterna táctica", "Mira compacta", "Silenciador"]
+    },
+    "Mantenimiento de maquinas de lavado": {
+      img: "https://cdn.gtahub.gg/missions/missionMachine.png",
+      pts: 20,
+      req: "2x Botellas Peróxido + 2x Botellas Acetona + 2x Botellas Aceite",
+      desc: "El almacén de las máquinas de blanqueo de dinero necesita mantenimiento urgente. Lleva los químicos y aceites necesarios para calibrarlas.",
+      loot: ["$3,700 en efectivo", "Cargador ampliado", "Cargador de tambor", "Empuñadura", "Kit de pintura", "Linterna táctica", "Mira compacta", "Silenciador"]
+    },
+    "Trafico multiple": {
+      img: "https://cdn.gtahub.gg/missions/traficoMultiple.png",
+      pts: 5,
+      req: "Varios vehículos en simultáneo (Competitivo)",
+      desc: "Varios lugares señalados con vehículos de contrabando. Roba y entrega la mayor cantidad posible antes que otros grupos.",
+      loot: ["Tec-9", "Bolsa de Cocaína", "Meta de alta pureza", "Tusi", "LSD", "Bolsa de Éxtasis", "Peyote", "Jeringa de Heroína", "Caja metálica de armas", "Disolvente industrial"]
+    },
+    "Trafico de organos": {
+      img: "https://cdn.gtahub.gg/missions/traficoDeOrganos.png",
+      pts: 10,
+      req: "Extracción rápida y discreta",
+      desc: "Identifica los almacenes clandestinos donde se guardan órganos valiosos y róbalos antes de que se pierdan.",
+      loot: ["Corazón humano", "Hígado humano", "Pancreas humano", "Pulmón humano", "Riñón humano", "Cargador ampliado", "Silenciador"]
+    },
+    "Mantenimiento de secuestrado (NPC)": {
+      img: "https://cdn.gtahub.gg/missions/fotoSecuestroNpc.png",
+      pts: 10,
+      req: "Mantenerlo con vida y alimentado durante 7 días",
+      desc: "Garantizar la supervivencia del objetivo secuestrado para extraer información crucial a lo largo de 7 días continuos.",
+      loot: ["Accesorios de armas", "Cargadores de tambor", "Empuñaduras", "Recompensas semanales"]
+    },
+    "Busqueda acuatica": {
+      img: "https://cdn.gtahub.gg/missions/fotoAcuaticSearch.webp",
+      pts: 5,
+      req: "1x Escáner de área (Tráficos)",
+      desc: "Señales extrañas en el mar. Dirígete a las coordenadas marítimas, escanea el fondo y bucea para rescatar el cargamento.",
+      loot: ["Colt SCAMP", "Pistola Compacta", "Pistola de combate", "Disolvente industrial", "Químicos cristalizados", "Gas butano", "Heroína", "Daga", "Silenciador"]
+    },
+    "Roba un vehiculo": {
+      img: "https://cdn.gtahub.gg/ui/mission-robv.jpg",
+      pts: 1,
+      req: "Ganzúa / Robo de autos",
+      desc: "Robar un vehículo específico en la ciudad y entregarlo rápidamente al contacto antes de que venza el tiempo.",
+      loot: ["$1,300 en efectivo", "Accesorios de armas", "Cargadores", "Silenciador"]
+    },
+    "Roba la camioneta de la pintureria": {
+      img: "https://cdn.gtahub.gg/missions/mission-trafick-gang.png",
+      pts: 12,
+      req: "Robo y saqueo de camioneta de empresa",
+      desc: "Roba la camioneta perteneciente a la empresa de pinturas y quédate con todos los materiales químicos y pinturas del maletero.",
+      loot: ["Caja con botellas", "Caja de Droga", "Caja de plástico blanca", "Maza de acero", "Lata de spray", "Porro", "Tolueno", "Yodo", "Pistola vintage", "Bate de béisbol"]
+    },
+    "Robo de propiedad": {
+      img: "https://cdn.gtahub.gg/ui/misionrobo1.png",
+      pts: 11,
+      req: "Planos arquitectónicos",
+      desc: "Ingresa a una propiedad privada protegida para robar electrodomésticos, joyas y artículos de valor de su interior.",
+      loot: ["Televisor LCD", "Torre de PC", "Microondas", "Reloj de oro", "Reloj de plata", "Collar de perlas", "Joyero", "Pistola vintage", "Balas de Pistola"]
+    },
+    "Cuidado de la plantacion (dia 1)": {
+      img: "https://cdn.gtahub.gg/missions/weedcarestage1.png",
+      pts: 10,
+      req: "Un rociador + Guardar Foto de Planta pequeña",
+      desc: "Riega y fertiliza tus plantas. Documenta el progreso y GUARDA la fotografía para reclamar el domingo.",
+      loot: ["Fotografía de Planta pequeña", "Accesorios de armas", "Kits de pintura"]
+    },
+    "Cuidado de la plantacion (dia 2)": {
+      img: "https://cdn.gtahub.gg/missions/weedcarestage2.png",
+      pts: 32,
+      req: "Un rociador + Guardar Foto de Planta mediana",
+      desc: "Enciende el riego y mantén tus plantas creciendo. GUARDA la fotografía para el domingo.",
+      loot: ["Fotografía de Planta mediana", "Accesorios de armas", "Cargadores"]
+    },
+    "Cuidado de la plantacion (dia 3)": {
+      img: "https://cdn.gtahub.gg/missions/weedcarestage3.png",
+      pts: 32,
+      req: "Un rociador + Guardar Foto de Planta grande",
+      desc: "Atención final antes de la cosecha. GUARDA la fotografía para poder cobrar el botín el domingo.",
+      loot: ["Fotografía de Planta grande", "Accesorios de armas", "Silenciadores"]
+    },
+    "Dia de la recompensa": {
+      img: "https://cdn.gtahub.gg/missions/weedcarereward.png",
+      pts: 100,
+      req: "Presentar las 3 Fotografías de los días Lun, Mié y Vie",
+      desc: "Entrega las 3 fotos acumuladas durante la semana para reclamar el gran botín de marihuana y efectivo.",
+      loot: ["$16,000 en efectivo", "Bong de Marihuana", "Accesorios de armas", "Cargadores"]
+    }
+  };
+
+  const dayNames = { lun: "Lunes", mar: "Martes", mie: "Miércoles", jue: "Jueves", vie: "Viernes", sab: "Sábado", dom: "Domingo" };
+  const dayKeys = ["lun", "mar", "mie", "jue", "vie", "sab", "dom"];
+
+  let rawMissions = [];
+  let currentView = 'grid';
+
+  function cleanName(n) {
+    return n.trim().replace(/^mision/i, "Misión").replace(/quimicos/i, "químicos").replace(/organos/i, "órganos").replace(/vehiculos/i, "vehículos").replace(/almacen/i, "almacén").replace(/acuatica/i, "acuática");
+  }
+
+  function getMeta(name) {
+    for (const k in MISSION_META) {
+      if (k.toLowerCase() === name.toLowerCase() || name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())) {
+        return MISSION_META[k];
+      }
+    }
+    return {
+      img: "https://cdn.gtahub.gg/ui/maletin.png",
+      pts: 5,
+      req: "Requisitos de facción",
+      desc: "Actividad oficial de organización.",
+      loot: ["Recompensas monetarias y puntos diarios"]
     };
-    const dayAbbreviations = Object.keys(dayNames); // ["lun", "mar", "mie", ...]
+  }
 
-    function parseCSV(data) {
-      const rows = data.trim().split('\n');
-      return rows.map(row => {
-        const [mission, times, days, group] = row.split(';');
-        return {
-          mission,
-          times: times.split(',').map(range => range.split('-').map(Number)),
-          days: days.split(',').map(day => day.trim()), // Parse day abbreviations
-          group
-        };
+  function getUTCData() {
+    const now = new Date();
+    const dayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
+    return {
+      hour: now.getUTCHours(),
+      minute: now.getUTCMinutes(),
+      dayKey: dayKeys[dayIdx],
+      dayName: dayNames[dayKeys[dayIdx]]
+    };
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    return lines.map(line => {
+      const parts = line.split(';');
+      if (parts.length < 4) return null;
+      const [name, timesStr, daysStr, group] = parts;
+      const times = timesStr.split(',').map(t => {
+        const [start, end] = t.split('-').map(Number);
+        return { start, end, label: `${start.toString().padStart(2,'0')}:00 - ${end.toString().padStart(2,'0')}:00` };
       });
-    }
-
-    function getCurrentUTCDay() {
-      const now = new Date();
-      const dayIndex = now.getUTCDay(); // 0 for Sunday, 1 for Monday, etc.
-      const abbreviation = dayAbbreviations[(dayIndex + 6) % 7]; // Adjust to make Monday (lun) the first day
-      return abbreviation;
-    }
-
-    function isMissionAvailable(mission, currentHour, currentDay) {
-      if (mission.days.includes("todos")) { // Use "todos" for missions available every day
-        return mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
-      }
-      return mission.days.includes(currentDay) &&
-              mission.times.some(timeRange => isTimeAvailable(timeRange, currentHour));
-    }
-    function isTimeAvailable(timeRange, currentHour) {
-      let [start, end] = timeRange;
-      if (end < start) {
-        end += 24;
-      }
-      return currentHour >= start && currentHour < end;
-    }
-    function getCurrentUTCInfo() {
-      const now = new Date();
+      const days = daysStr.split(',').map(d => d.trim().toLowerCase());
       return {
-        currentHour: now.getUTCHours(),
-        currentDay: getMondayBasedUTCDay(now)
+        name: cleanName(name),
+        times,
+        days,
+        group: group.trim().toLowerCase(),
+        meta: getMeta(name)
       };
-    }
-    function getMondayBasedUTCDay(date) {
-      const day = date.getUTCDay();
-      return (day === 0) ? 6 : day - 1;
-    }
+    }).filter(Boolean);
+  }
 
-    function displayAvailableMissions(filterGroup = 'all', filterDay = 'all') {
-      const { currentHour } = getCurrentUTCInfo();
-      const currentDay = getCurrentUTCDay();
-      const tableBody = document.querySelector('#missionsTable tbody');
-      tableBody.innerHTML = '';
+  function checkAvailability(mission, utc) {
+    const dayMatch = mission.days.includes("todos") || mission.days.includes(utc.dayKey);
+    let isActiveNow = false;
+    let nextTimeStr = "";
 
-      missionsData.forEach(mission => {
-        if (filterGroup !== 'all' && mission.group.replace(/[\n\r]/g, "") !== filterGroup) {
-          return;
+    if (dayMatch) {
+      for (const t of mission.times) {
+        if (utc.hour >= t.start && utc.hour < t.end) {
+          isActiveNow = true;
+          const minsLeft = (t.end - utc.hour) * 60 - utc.minute;
+          const hLeft = Math.floor(minsLeft / 60);
+          const mLeft = minsLeft % 60;
+          nextTimeStr = `Cierra en ${hLeft > 0 ? hLeft + 'h ' : ''}${mLeft}m`;
+          break;
         }
-
-        if (filterDay !== 'all') {
-          const targetDay = filterDay === 'today' ? currentDay : filterDay;
-          if (!mission.days.includes(targetDay) && !mission.days.includes("todos")) {
-            return;
-          }
-        }
-
-        const row = document.createElement('tr');
-        const isAvailable = isMissionAvailable(mission, currentHour, currentDay);
-
-        if (isAvailable) {
-          row.classList.add('available');
-        }
-
-        const highlightedTimes = mission.times.map(timeRange => {
-          const isCurrentTimeAvailable = isTimeAvailable(timeRange, currentHour) &&
-                  (mission.days.includes(currentDay) || mission.days.includes("todos"));
-          return isCurrentTimeAvailable
-                  ? `<span class="available-time">${timeRange[0]}-${timeRange[1]}</span>`
-                  : `${timeRange[0]}-${timeRange[1]}`;
-        }).join(', ');
-
-        const availableDays = mission.days.includes("todos") ? 'Todos los días' : mission.days.map(day => dayNames[day]).join(', ');
-
-        row.innerHTML = `
-                <td>${mission.mission}</td>
-                <td>${highlightedTimes}</td>
-                <td>${availableDays}</td>
-                <td>${mission.group}</td>
-            `;
-        tableBody.appendChild(row);
-      });
+      }
     }
 
-    // Update day filter options
-    function setupFilters() {
-      const dayFilter = document.getElementById('dayFilter');
-      dayFilter.innerHTML = `
-            <option value="all">Todos los días</option>
-            <option value="today">Hoy</option>
-            ${dayAbbreviations.map(abbreviation => `<option value="${abbreviation}">${dayNames[abbreviation]}</option>`).join('')}
-        `;
+    if (!isActiveNow && dayMatch) {
+      const upcoming = mission.times.find(t => t.start > utc.hour);
+      if (upcoming) {
+        const minsTo = (upcoming.start - utc.hour) * 60 - utc.minute;
+        const hTo = Math.floor(minsTo / 60);
+        const mTo = minsTo % 60;
+        nextTimeStr = `Abre en ${hTo > 0 ? hTo + 'h ' : ''}${mTo}m`;
+      } else {
+        nextTimeStr = `Finalizó por hoy`;
+      }
+    } else if (!dayMatch) {
+      const dayList = mission.days.map(d => dayNames[d] || d).join(', ');
+      nextTimeStr = `Disponible: ${dayList}`;
+    }
 
-      const groupFilter = document.getElementById('groupFilter');
+    return { isActiveNow, dayMatch, nextTimeStr };
+  }
 
-      function applyFilters() {
-        const selectedGroup = groupFilter.value;
-        const selectedDay = dayFilter.value;
-        displayAvailableMissions(selectedGroup, selectedDay);
+  function render() {
+    const utc = getUTCData();
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const filterStatus = document.getElementById('filterStatus').value;
+    const filterGroup = document.getElementById('filterGroup').value;
+    const filterDay = document.getElementById('filterDay').value;
+
+    const grid = document.getElementById('missionsGrid');
+    const tbody = document.getElementById('tableBody');
+    grid.innerHTML = '';
+    tbody.innerHTML = '';
+
+    let activeCount = 0;
+    let moteroCount = 0;
+    let pandillaCount = 0;
+
+    const filtered = rawMissions.filter(m => {
+      const { isActiveNow, dayMatch } = checkAvailability(m, utc);
+
+      if (isActiveNow) activeCount++;
+      if (m.group === 'motero') moteroCount++;
+      if (m.group === 'pandilla') pandillaCount++;
+
+      // Filters
+      if (filterGroup !== 'all' && m.group !== filterGroup) return false;
+
+      if (filterStatus === 'active' && !isActiveNow) return false;
+      if (filterStatus === 'today' && !dayMatch) return false;
+
+      if (filterDay !== 'all') {
+        const targetDay = filterDay === 'today' ? utc.dayKey : filterDay;
+        if (!m.days.includes('todos') && !m.days.includes(targetDay)) return false;
       }
 
-      groupFilter.addEventListener('change', applyFilters);
-      dayFilter.addEventListener('change', applyFilters);
+      if (q) {
+        const matchName = m.name.toLowerCase().includes(q);
+        const matchReq = m.meta.req.toLowerCase().includes(q);
+        const matchDesc = m.meta.desc.toLowerCase().includes(q);
+        const matchLoot = m.meta.loot && m.meta.loot.some(l => l.toLowerCase().includes(q));
+        if (!matchName && !matchReq && !matchDesc && !matchLoot) return false;
+      }
+
+      return true;
+    });
+
+    document.getElementById('statActive').textContent = activeCount;
+    document.getElementById('statTotal').textContent = rawMissions.length;
+    document.getElementById('statMotero').textContent = moteroCount;
+    document.getElementById('statPandilla').textContent = pandillaCount;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state"><i class="fa-solid fa-folder-open"></i><h3>No se encontraron actividades con los filtros actuales</h3></div>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:#94a3b8;">No se encontraron misiones</td></tr>`;
+      return;
     }
 
-    function fetchAndDisplayMissions() {
-      fetch(csvUrl)
-        .then(response => response.text())
-        .then(data => {
-          missionsData = parseCSV(data);
-          displayAvailableMissions();
-        })
-        .catch(error => console.error('Error fetching the CSV file:', error));
+    filtered.forEach((m, idx) => {
+      const { isActiveNow, dayMatch, nextTimeStr } = checkAvailability(m, utc);
+      const pillClass = m.group === 'motero' ? 'pill-motero' : (m.group === 'pandilla' ? 'pill-pandilla' : 'pill-grupo');
+      const statusClass = isActiveNow ? 'status-active' : (dayMatch ? 'status-next' : 'status-inactive');
+      const statusIcon = isActiveNow ? '<i class="fa-solid fa-circle-play"></i> ACTIVA AHORA' : (dayMatch ? `<i class="fa-solid fa-clock"></i> ${nextTimeStr}` : `<i class="fa-solid fa-calendar-xmark"></i> ${nextTimeStr}`);
+
+      const timesBadges = m.times.map(t => {
+        const isCurrent = isActiveNow && utc.hour >= t.start && utc.hour < t.end && dayMatch;
+        return `<span class="schedule-val ${isCurrent ? 'schedule-highlight' : ''}">${t.start.toString().padStart(2,'0')}-${t.end.toString().padStart(2,'0')}hs</span>`;
+      }).join(', ');
+
+      const daysStr = m.days.includes("todos") ? "Todos los días" : m.days.map(d => dayNames[d] || d).join(', ');
+
+      // Card Element
+      const card = document.createElement('div');
+      card.className = `mission-card ${isActiveNow ? 'is-active' : ''}`;
+      card.onclick = () => openModal(m);
+      card.innerHTML = `
+        <div class="card-banner">
+          <img src="${m.meta.img}" alt="${m.name}" onerror="this.src='https://cdn.gtahub.gg/ui/maletin.png'">
+          <div class="card-banner-overlay"></div>
+          <div class="status-badge ${statusClass}">${statusIcon}</div>
+          <div class="group-pill ${pillClass}">${m.group}</div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="points-badge"><i class="fa-solid fa-star"></i> +${m.meta.pts} Pts</div>
+            <span style="font-size:11px; color:#94a3b8;"><i class="fa-solid fa-circle-info"></i> Detalles</span>
+          </div>
+          <div class="card-title">${m.name}</div>
+          <div class="req-box"><i class="fa-solid fa-triangle-exclamation"></i> <div><strong>Requisitos:</strong> ${m.meta.req}</div></div>
+          <div class="schedule-strip">
+            <div class="schedule-row">
+              <span class="schedule-label">Horarios:</span>
+              <span class="schedule-val">${timesBadges}</span>
+            </div>
+            <div class="schedule-row">
+              <span class="schedule-label">Días:</span>
+              <span class="schedule-val" style="font-family:sans-serif; font-size:11px; color:#94a3b8;">${daysStr}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      // Table Row Element
+      const tr = document.createElement('tr');
+      if (isActiveNow) tr.classList.add('tr-active');
+      tr.style.cursor = "pointer";
+      tr.onclick = () => openModal(m);
+      tr.innerHTML = `
+        <td><img class="tbl-img" src="${m.meta.img}" onerror="this.src='https://cdn.gtahub.gg/ui/maletin.png'"></td>
+        <td><strong style="color:#fff;">${m.name}</strong></td>
+        <td><span class="group-pill ${pillClass}" style="position:static;">${m.group}</span></td>
+        <td><span class="status-badge ${statusClass}" style="position:static; display:inline-flex;">${statusIcon}</span></td>
+        <td><span style="font-family:Consolas, monospace;">${timesBadges}</span></td>
+        <td><span style="color:#cbd5e1;">${daysStr}</span></td>
+        <td><span style="color:#fbbf24; font-size:12px;">${m.meta.req}</span></td>
+        <td><span class="points-badge">+${m.meta.pts} Pts</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function setView(view) {
+    currentView = view;
+    document.getElementById('btnGrid').classList.toggle('active', view === 'grid');
+    document.getElementById('btnTable').classList.toggle('active', view === 'table');
+    document.getElementById('missionsGrid').style.display = view === 'grid' ? 'grid' : 'none';
+    document.getElementById('tableContainer').style.display = view === 'table' ? 'block' : 'none';
+  }
+
+  function openModal(m) {
+    const modal = document.getElementById('modalBackdrop');
+    const content = document.getElementById('modalContent');
+    const lootHtml = m.meta.loot && m.meta.loot.length ? m.meta.loot.map(item => `<div class="loot-item"><i class="fa-solid fa-gift" style="color:var(--primary);"></i> ${item}</div>`).join('') : '<p style="color:#94a3b8; font-size:12px;">No especificado</p>';
+
+    content.innerHTML = `
+      <div class="modal-close" onclick="closeModalDirect()"><i class="fa-solid fa-xmark"></i></div>
+      <div style="border-radius:12px; overflow:hidden; height:180px; margin-bottom:16px; position:relative;">
+        <img src="${m.meta.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://cdn.gtahub.gg/ui/maletin.png'">
+        <div style="position:absolute; bottom:12px; left:14px;" class="group-pill ${m.group === 'motero' ? 'pill-motero' : (m.group === 'pandilla' ? 'pill-pandilla' : 'pill-grupo')}">${m.group}</div>
+      </div>
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">${m.name}</h2>
+      <p style="color:#cbd5e1; font-size:13px; line-height:1.5; margin-bottom:16px;">${m.meta.desc}</p>
+      
+      <div class="req-box" style="margin-bottom:16px;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div><strong>Requisitos Obligatorios:</strong><br>${m.meta.req}</div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h4 style="font-size:12px; text-transform:uppercase; color:#94a3b8; margin-bottom:6px;">Recompensas Posibles:</h4>
+        <div class="loot-grid">${lootHtml}</div>
+      </div>
+
+      <div class="schedule-strip">
+        <div class="schedule-row">
+          <span class="schedule-label">Puntos Diarios:</span>
+          <span class="points-badge">+${m.meta.pts} Pts</span>
+        </div>
+        <div class="schedule-row">
+          <span class="schedule-label">Días Habilitados:</span>
+          <span class="schedule-val">${m.days.includes("todos") ? "Todos los días" : m.days.map(d => dayNames[d] || d).join(', ')}</span>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+  }
+
+  function closeModalDirect() {
+    document.getElementById('modalBackdrop').style.display = 'none';
+  }
+
+  function closeModal(e) {
+    if (e.target.id === 'modalBackdrop') {
+      closeModalDirect();
     }
+  }
 
-    function updateUTCTimer() {
-      const now = new Date();
-      const utcTimeString = now.toUTCString().split(' ')[4];
-      document.getElementById('utcTimer').textContent = `UTC Time: ${utcTimeString}`;
+  function updateClock() {
+    const now = new Date();
+    const utcStr = now.toUTCString().split(' ')[4];
+    const utc = getUTCData();
+    document.getElementById('utcClock').textContent = `${utcStr} UTC`;
+    document.getElementById('utcDayText').textContent = `HOY: ${utc.dayName.toUpperCase()}`;
+  }
+
+  async function init() {
+    updateClock();
+    setInterval(updateClock, 1000);
+    setInterval(render, 30000); // Re-check every 30s
+
+    try {
+      const res = await fetch('actividades.csv');
+      const text = await res.text();
+      rawMissions = parseCSV(text);
+      render();
+    } catch (e) {
+      console.error("Error loading CSV:", e);
     }
+  }
 
-    function startUTCTimer() {
-      updateUTCTimer();
-      setInterval(updateUTCTimer, 1000);
-    }
-
-    // Set up filters
-
-    window.onload = function () {
-      startUTCTimer();
-      fetchAndDisplayMissions();
-      setupFilters();
-    };
-  </script>
+  window.onload = init;
+</script>
 </body>
 </html>
