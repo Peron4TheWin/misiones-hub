@@ -72,6 +72,59 @@
       margin-top: 4px;
     }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .tz-toggle-container {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      padding: 5px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-tz {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-tz:hover {
+      color: #fff;
+    }
+    .btn-tz.active {
+      background: var(--primary);
+      color: #0b0f19;
+      font-weight: 700;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+    .tz-badge {
+      font-size: 10px;
+      font-family: 'Consolas', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+    .btn-tz.active .tz-badge {
+      background: rgba(11, 15, 25, 0.25);
+      color: #0b0f19;
+      font-weight: 800;
+    }
+
     .clock-box {
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--border-color);
@@ -520,11 +573,22 @@
       <h1><i class="fa-solid fa-crosshairs"></i> GTAHub <span>Actividades & Misiones</span></h1>
       <p>Panel en tiempo real de horarios, requisitos, recompensas y disponibilidad</p>
     </div>
-    <div class="clock-box">
-      <i class="fa-solid fa-clock clock-icon"></i>
-      <div>
-        <div class="clock-text" id="utcClock">--:--:--</div>
-        <div class="clock-day" id="utcDayText">UTC TIME</div>
+    <div class="header-right">
+      <div class="tz-toggle-container">
+        <button class="btn-tz active" id="btnTzLocal" onclick="setTimeMode('local')">
+          <i class="fa-solid fa-house-user"></i> <span>Horario Local</span>
+          <span class="tz-badge" id="tzOffsetBadge">GMT-3</span>
+        </button>
+        <button class="btn-tz" id="btnTzUTC" onclick="setTimeMode('utc')">
+          <i class="fa-solid fa-earth-americas"></i> <span>Servidor (UTC)</span>
+        </button>
+      </div>
+      <div class="clock-box">
+        <i class="fa-solid fa-clock clock-icon"></i>
+        <div>
+          <div class="clock-text" id="mainClock">--:--:--</div>
+          <div class="clock-day" id="mainDayText">--</div>
+        </div>
       </div>
     </div>
   </div>
@@ -612,8 +676,8 @@
           <th>Misión</th>
           <th>Organización</th>
           <th>Estado Actual</th>
-          <th>Horarios</th>
-          <th>Días Disponibles</th>
+          <th id="tblHeaderHorarios">Horarios</th>
+          <th id="tblHeaderDias">Días Disponibles</th>
           <th>Requisitos</th>
           <th>Puntos</th>
         </tr>
@@ -1007,6 +1071,7 @@
 
   let rawMissions = [];
   let currentView = 'grid';
+  let timeMode = localStorage.getItem('gtahub_time_mode') || 'local';
 
   function normalize(s) {
     return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -1041,15 +1106,36 @@
     };
   }
 
-  function getUTCData() {
-    const now = new Date();
-    const dayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
-    return {
-      hour: now.getUTCHours(),
-      minute: now.getUTCMinutes(),
-      dayKey: dayKeys[dayIdx],
-      dayName: dayNames[dayKeys[dayIdx]]
-    };
+  function getLocalOffsetMinutes() {
+    return -new Date().getTimezoneOffset();
+  }
+
+  function getGMTOffsetString() {
+    const offset = getLocalOffsetMinutes();
+    const sign = offset >= 0 ? '+' : '-';
+    const abs = Math.abs(offset);
+    const h = Math.floor(abs / 60);
+    const m = abs % 60;
+    return m === 0 ? `GMT${sign}${h}` : `GMT${sign}${h}:${m.toString().padStart(2, '0')}`;
+  }
+
+  function setTimeMode(mode) {
+    timeMode = mode;
+    localStorage.setItem('gtahub_time_mode', mode);
+    updateTzButtons();
+    updateClock();
+    render();
+  }
+
+  function updateTzButtons() {
+    const btnLocal = document.getElementById('btnTzLocal');
+    const btnUTC = document.getElementById('btnTzUTC');
+    const tzOffsetBadge = document.getElementById('tzOffsetBadge');
+    if (tzOffsetBadge) {
+      tzOffsetBadge.textContent = getGMTOffsetString();
+    }
+    if (btnLocal) btnLocal.classList.toggle('active', timeMode === 'local');
+    if (btnUTC) btnUTC.classList.toggle('active', timeMode === 'utc');
   }
 
   function parseCSV(text) {
@@ -1060,7 +1146,7 @@
       const [name, timesStr, daysStr, group] = parts;
       const times = timesStr.split(',').map(t => {
         const [start, end] = t.split('-').map(Number);
-        return { start, end, label: `${start.toString().padStart(2,'0')}:00 - ${end.toString().padStart(2,'0')}:00` };
+        return { start, end };
       });
       const days = daysStr.split(',').map(d => d.trim().toLowerCase());
       const grp = group.trim().toLowerCase();
@@ -1074,16 +1160,102 @@
     }).filter(Boolean);
   }
 
-  function checkAvailability(mission, utc) {
-    const dayMatch = mission.days.includes("todos") || mission.days.includes(utc.dayKey);
+  function getMissionSchedule(mission) {
+    if (timeMode === 'utc') {
+      const timesDisplay = mission.times.map(t => {
+        const sStr = `${t.start.toString().padStart(2, '0')}:00`;
+        const eStr = `${t.end.toString().padStart(2, '0')}:00`;
+        return {
+          startStr: sStr,
+          endStr: eStr,
+          label: `${t.start.toString().padStart(2, '0')}-${t.end.toString().padStart(2, '0')}hs`,
+          fullLabel: `${sStr} - ${eStr}`,
+          originalSlot: t
+        };
+      });
+      const daysStr = mission.days.includes("todos")
+        ? "Todos los días"
+        : mission.days.map(d => dayNames[d] || d).join(', ');
+      return { timesDisplay, daysStr, dayKeysList: mission.days };
+    }
+
+    // Local Mode
+    const offsetMinutes = getLocalOffsetMinutes();
+    const dayShiftedSet = new Set();
+
+    const timesDisplay = mission.times.map(t => {
+      const startMinTotal = t.start * 60 + offsetMinutes;
+      const endMinTotal = t.end * 60 + offsetMinutes;
+
+      const localStartMin = ((startMinTotal % 1440) + 1440) % 1440;
+      const startH = Math.floor(localStartMin / 60);
+      const startM = localStartMin % 60;
+      const startDayShift = Math.floor(startMinTotal / 1440);
+
+      const localEndMin = ((endMinTotal % 1440) + 1440) % 1440;
+      const endH = Math.floor(localEndMin / 60);
+      const endM = localEndMin % 60;
+
+      const sStr = `${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}`;
+      const eStr = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+      const label = `${sStr} - ${eStr}`;
+
+      if (!mission.days.includes("todos")) {
+        mission.days.forEach(d => {
+          const origIdx = dayKeys.indexOf(d);
+          if (origIdx !== -1) {
+            const localIdx = ((origIdx + startDayShift) % 7 + 7) % 7;
+            dayShiftedSet.add(dayKeys[localIdx]);
+          }
+        });
+      }
+
+      return {
+        startStr: sStr,
+        endStr: eStr,
+        label,
+        fullLabel: `${sStr} - ${eStr}`,
+        originalSlot: t
+      };
+    });
+
+    let daysStr = "";
+    let dayKeysList = [];
+
+    if (mission.days.includes("todos")) {
+      daysStr = "Todos los días";
+      dayKeysList = ["todos"];
+    } else {
+      dayKeysList = dayKeys.filter(d => dayShiftedSet.has(d));
+      daysStr = dayKeysList.map(d => dayNames[d] || d).join(', ');
+    }
+
+    return { timesDisplay, daysStr, dayKeysList };
+  }
+
+  function checkAvailability(mission) {
+    const now = new Date();
+    const utcHour = now.getUTCHours();
+    const utcMinute = now.getUTCMinutes();
+    const utcDayIdx = (now.getUTCDay() + 6) % 7;
+    const utcDayKey = dayKeys[utcDayIdx];
+
+    const localDayIdx = (now.getDay() + 6) % 7;
+    const localDayKey = dayKeys[localDayIdx];
+
+    const schedule = getMissionSchedule(mission);
+
+    const utcDayMatch = mission.days.includes("todos") || mission.days.includes(utcDayKey);
     let isActiveNow = false;
+    let activeSlot = null;
     let nextTimeStr = "";
 
-    if (dayMatch) {
+    if (utcDayMatch) {
       for (const t of mission.times) {
-        if (utc.hour >= t.start && utc.hour < t.end) {
+        if (utcHour >= t.start && utcHour < t.end) {
           isActiveNow = true;
-          const minsLeft = (t.end - utc.hour) * 60 - utc.minute;
+          activeSlot = t;
+          const minsLeft = (t.end - utcHour) * 60 - utcMinute;
           const hLeft = Math.floor(minsLeft / 60);
           const mLeft = minsLeft % 60;
           nextTimeStr = `Cierra en ${hLeft > 0 ? hLeft + 'h ' : ''}${mLeft}m`;
@@ -1092,26 +1264,44 @@
       }
     }
 
-    if (!isActiveNow && dayMatch) {
-      const upcoming = mission.times.find(t => t.start > utc.hour);
-      if (upcoming) {
-        const minsTo = (upcoming.start - utc.hour) * 60 - utc.minute;
-        const hTo = Math.floor(minsTo / 60);
-        const mTo = minsTo % 60;
-        nextTimeStr = `Abre en ${hTo > 0 ? hTo + 'h ' : ''}${mTo}m`;
+    const isTodayMatch = timeMode === 'local'
+      ? (schedule.dayKeysList.includes("todos") || schedule.dayKeysList.includes(localDayKey))
+      : utcDayMatch;
+
+    if (!isActiveNow) {
+      if (utcDayMatch) {
+        const upcoming = mission.times.filter(t => t.start > utcHour).sort((a, b) => a.start - b.start)[0];
+        if (upcoming) {
+          const minsTo = (upcoming.start - utcHour) * 60 - utcMinute;
+          const hTo = Math.floor(minsTo / 60);
+          const mTo = minsTo % 60;
+          nextTimeStr = `Abre en ${hTo > 0 ? hTo + 'h ' : ''}${mTo}m`;
+        } else {
+          nextTimeStr = isTodayMatch ? `Finalizó por hoy` : `Disponible: ${schedule.daysStr}`;
+        }
       } else {
-        nextTimeStr = `Finalizó por hoy`;
+        nextTimeStr = isTodayMatch ? `Abre hoy` : `Disponible: ${schedule.daysStr}`;
       }
-    } else if (!dayMatch) {
-      const dayList = mission.days.map(d => dayNames[d] || d).join(', ');
-      nextTimeStr = `Disponible: ${dayList}`;
     }
 
-    return { isActiveNow, dayMatch, nextTimeStr };
+    return {
+      isActiveNow,
+      activeSlot,
+      isTodayMatch,
+      nextTimeStr,
+      schedule
+    };
   }
 
   function render() {
-    const utc = getUTCData();
+    updateTzButtons();
+    const now = new Date();
+    const localDayIdx = (now.getDay() + 6) % 7;
+    const localDayKey = dayKeys[localDayIdx];
+    const utcDayIdx = (now.getUTCDay() + 6) % 7;
+    const utcDayKey = dayKeys[utcDayIdx];
+    const currentDayKey = timeMode === 'local' ? localDayKey : utcDayKey;
+
     const q = normalize(document.getElementById('searchInput').value);
     const filterStatus = document.getElementById('filterStatus').value;
     const filterGroup = document.getElementById('filterGroup').value;
@@ -1127,7 +1317,8 @@
     let pandillaCount = 0;
 
     const filtered = rawMissions.filter(m => {
-      const { isActiveNow, dayMatch } = checkAvailability(m, utc);
+      const availability = checkAvailability(m);
+      const { isActiveNow, isTodayMatch, schedule } = availability;
 
       if (isActiveNow) activeCount++;
       if (m.group === 'motero') moteroCount++;
@@ -1137,11 +1328,11 @@
       if (filterGroup !== 'all' && m.group !== filterGroup) return false;
 
       if (filterStatus === 'active' && !isActiveNow) return false;
-      if (filterStatus === 'today' && !dayMatch) return false;
+      if (filterStatus === 'today' && !isTodayMatch) return false;
 
       if (filterDay !== 'all') {
-        const targetDay = filterDay === 'today' ? utc.dayKey : filterDay;
-        if (!m.days.includes('todos') && !m.days.includes(targetDay)) return false;
+        const targetDay = filterDay === 'today' ? currentDayKey : filterDay;
+        if (!schedule.dayKeysList.includes('todos') && !schedule.dayKeysList.includes(targetDay)) return false;
       }
 
       if (q) {
@@ -1160,6 +1351,11 @@
     document.getElementById('statMotero').textContent = moteroCount;
     document.getElementById('statPandilla').textContent = pandillaCount;
 
+    const tblHeaderHorarios = document.getElementById('tblHeaderHorarios');
+    if (tblHeaderHorarios) {
+      tblHeaderHorarios.textContent = timeMode === 'local' ? `Horarios (${getGMTOffsetString()})` : 'Horarios (UTC)';
+    }
+
     if (filtered.length === 0) {
       grid.innerHTML = `<div class="empty-state"><i class="fa-solid fa-folder-open"></i><h3>No se encontraron actividades con los filtros actuales</h3></div>`;
       tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:#94a3b8;">No se encontraron misiones</td></tr>`;
@@ -1167,17 +1363,19 @@
     }
 
     filtered.forEach((m) => {
-      const { isActiveNow, dayMatch, nextTimeStr } = checkAvailability(m, utc);
-      const pillClass = m.group === 'motero' ? 'pill-motero' : (m.group === 'pandilla' ? 'pill-pandilla' : 'pill-grupo');
-      const statusClass = isActiveNow ? 'status-active' : (dayMatch ? 'status-next' : 'status-inactive');
-      const statusIcon = isActiveNow ? '<i class="fa-solid fa-circle-play"></i> ACTIVA AHORA' : (dayMatch ? `<i class="fa-solid fa-clock"></i> ${nextTimeStr}` : `<i class="fa-solid fa-calendar-xmark"></i> ${nextTimeStr}`);
+      const availability = checkAvailability(m);
+      const { isActiveNow, isTodayMatch, nextTimeStr, schedule, activeSlot } = availability;
 
-      const timesBadges = m.times.map(t => {
-        const isCurrent = isActiveNow && utc.hour >= t.start && utc.hour < t.end && dayMatch;
-        return `<span class="schedule-val ${isCurrent ? 'schedule-highlight' : ''}">${t.start.toString().padStart(2,'0')}-${t.end.toString().padStart(2,'0')}hs</span>`;
+      const pillClass = m.group === 'motero' ? 'pill-motero' : (m.group === 'pandilla' ? 'pill-pandilla' : 'pill-grupo');
+      const statusClass = isActiveNow ? 'status-active' : (isTodayMatch ? 'status-next' : 'status-inactive');
+      const statusIcon = isActiveNow ? '<i class="fa-solid fa-circle-play"></i> ACTIVA AHORA' : (isTodayMatch ? `<i class="fa-solid fa-clock"></i> ${nextTimeStr}` : `<i class="fa-solid fa-calendar-xmark"></i> ${nextTimeStr}`);
+
+      const timesBadges = schedule.timesDisplay.map(t => {
+        const isCurrent = isActiveNow && activeSlot === t.originalSlot;
+        return `<span class="schedule-val ${isCurrent ? 'schedule-highlight' : ''}">${t.label}</span>`;
       }).join(', ');
 
-      const daysStr = m.days.includes("todos") ? "Todos los días" : m.days.map(d => dayNames[d] || d).join(', ');
+      const daysStr = schedule.daysStr;
 
       // Card Element
       const card = document.createElement('div');
@@ -1199,8 +1397,8 @@
           <div class="req-box"><i class="fa-solid fa-triangle-exclamation"></i> <div><strong>Requisitos:</strong> ${m.meta.req}</div></div>
           <div class="schedule-strip">
             <div class="schedule-row">
-              <span class="schedule-label">Horarios:</span>
-              <span class="schedule-val">${timesBadges}</span>
+              <span class="schedule-label">Horarios (${timeMode === 'local' ? getGMTOffsetString() : 'UTC'}):</span>
+              <span class="schedule-val" style="display:flex; flex-wrap:wrap; gap:4px; justify-content:flex-end;">${timesBadges}</span>
             </div>
             <div class="schedule-row">
               <span class="schedule-label">Días:</span>
@@ -1241,7 +1439,18 @@
   function openModal(m) {
     const modal = document.getElementById('modalBackdrop');
     const content = document.getElementById('modalContent');
+    const availability = checkAvailability(m);
+    const schedule = availability.schedule;
+
+    const timesBadges = schedule.timesDisplay.map(t => {
+      const isCurrent = availability.isActiveNow && availability.activeSlot === t.originalSlot;
+      return `<span class="schedule-val ${isCurrent ? 'schedule-highlight' : ''}" style="display:inline-block; margin:2px 4px 2px 0;">${t.fullLabel}</span>`;
+    }).join(' ');
+
     const lootHtml = m.meta.loot && m.meta.loot.length ? m.meta.loot.map(item => `<div class="loot-item"><i class="fa-solid fa-gift" style="color:var(--primary);"></i> ${item}</div>`).join('') : '<p style="color:#94a3b8; font-size:12px;">No especificado</p>';
+
+    const tzLabel = timeMode === 'local' ? `Horarios (${getGMTOffsetString()} Local)` : `Horarios (UTC Servidor)`;
+    const daysLabel = timeMode === 'local' ? `Días (${getGMTOffsetString()} Local)` : `Días (UTC Servidor)`;
 
     content.innerHTML = `
       <div class="modal-close" onclick="closeModalDirect()"><i class="fa-solid fa-xmark"></i></div>
@@ -1268,8 +1477,12 @@
           <span class="points-badge">+${m.meta.pts} Pts</span>
         </div>
         <div class="schedule-row">
-          <span class="schedule-label">Días Habilitados:</span>
-          <span class="schedule-val">${m.days.includes("todos") ? "Todos los días" : m.days.map(d => dayNames[d] || d).join(', ')}</span>
+          <span class="schedule-label">${tzLabel}:</span>
+          <div style="text-align:right;">${timesBadges}</div>
+        </div>
+        <div class="schedule-row">
+          <span class="schedule-label">${daysLabel}:</span>
+          <span class="schedule-val">${schedule.daysStr}</span>
         </div>
       </div>
     `;
@@ -1288,13 +1501,30 @@
 
   function updateClock() {
     const now = new Date();
-    const utcStr = now.toUTCString().split(' ')[4];
-    const utc = getUTCData();
-    document.getElementById('utcClock').textContent = `${utcStr} UTC`;
-    document.getElementById('utcDayText').textContent = `HOY: ${utc.dayName.toUpperCase()}`;
+    const clockEl = document.getElementById('mainClock');
+    const dayEl = document.getElementById('mainDayText');
+    if (!clockEl || !dayEl) return;
+
+    if (timeMode === 'utc') {
+      const utcStr = now.toUTCString().split(' ')[4];
+      const dayIdx = (now.getUTCDay() + 6) % 7;
+      const dayName = dayNames[dayKeys[dayIdx]];
+      clockEl.textContent = `${utcStr} UTC`;
+      dayEl.textContent = `HOY: ${dayName.toUpperCase()} (UTC)`;
+    } else {
+      const h = now.getHours().toString().padStart(2, '0');
+      const m = now.getMinutes().toString().padStart(2, '0');
+      const s = now.getSeconds().toString().padStart(2, '0');
+      const dayIdx = (now.getDay() + 6) % 7;
+      const dayName = dayNames[dayKeys[dayIdx]];
+      const tzStr = getGMTOffsetString();
+      clockEl.textContent = `${h}:${m}:${s}`;
+      dayEl.textContent = `HOY: ${dayName.toUpperCase()} (${tzStr})`;
+    }
   }
 
   async function init() {
+    updateTzButtons();
     updateClock();
     setInterval(updateClock, 1000);
     setInterval(render, 30000);
