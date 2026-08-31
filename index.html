@@ -1165,11 +1165,12 @@
       const timesDisplay = mission.times.map(t => {
         const sStr = `${t.start.toString().padStart(2, '0')}:00`;
         const eStr = `${t.end.toString().padStart(2, '0')}:00`;
+        const label = `${t.start.toString().padStart(2, '0')}-${t.end.toString().padStart(2, '0')}hs`;
         return {
           startStr: sStr,
           endStr: eStr,
-          label: `${t.start.toString().padStart(2, '0')}-${t.end.toString().padStart(2, '0')}hs`,
-          fullLabel: `${sStr} - ${eStr}`,
+          label: label,
+          fullLabel: label,
           originalSlot: t
         };
       });
@@ -1196,9 +1197,17 @@
       const endH = Math.floor(localEndMin / 60);
       const endM = localEndMin % 60;
 
-      const sStr = `${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}`;
-      const eStr = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
-      const label = `${sStr} - ${eStr}`;
+      const sHStr = startH.toString().padStart(2, '0');
+      const eHStr = endH.toString().padStart(2, '0');
+
+      let label = "";
+      if (startM === 0 && endM === 0) {
+        label = `${sHStr}-${eHStr}hs`;
+      } else {
+        const sMStr = startM.toString().padStart(2, '0');
+        const eMStr = endM.toString().padStart(2, '0');
+        label = `${sHStr}:${sMStr}-${eHStr}:${eMStr}hs`;
+      }
 
       if (!mission.days.includes("todos")) {
         mission.days.forEach(d => {
@@ -1211,10 +1220,10 @@
       }
 
       return {
-        startStr: sStr,
-        endStr: eStr,
+        startStr: `${sHStr}:${startM.toString().padStart(2, '0')}`,
+        endStr: `${eHStr}:${endM.toString().padStart(2, '0')}`,
         label,
-        fullLabel: `${sStr} - ${eStr}`,
+        fullLabel: label,
         originalSlot: t
       };
     });
