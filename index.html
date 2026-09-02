@@ -696,40 +696,123 @@
 <script>
   // EXACT PER-FACTION DATABASE EXTRACTED FROM GTAHUB LOGS
   const FACTION_DB = {
+  // --- MOTERO ---
   "mision de trafico ilegal|motero": {
     "img": "https://cdn.gtahub.gg/mission-mc2.jpg",
     "pts": 15,
-    "req": "Ninguno",
+    "req": "Vehículo rápido para huida y entrega",
     "desc": "Deberás ir en búsqueda de la carga, encontrarla lo más rápido para tomarla, llevarla a salvo hasta su punto de entrega y luego reclamar la recompensa que lleve dentro.",
-    "loot": []
+    "loot": [
+      "Balas de Pistola",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Hojas de Coca",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Peróxido de hidrógeno",
+      "Pistola de combate",
+      "Propileno",
+      "Silenciador"
+    ]
   },
   "trafico naval|motero": {
     "img": "https://cdn.gtahub.gg/mission-naval.jpg",
     "pts": 3,
-    "req": "Ninguno",
+    "req": "Búsqueda costera y navegación",
     "desc": "Deberás ir en búsqueda de una lancha, encontrarla lo antes posible y llevarla hasta el punto de entrega.",
-    "loot": []
+    "loot": [
+      "Balas de Pistola",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Filtro para droga",
+      "Hojas de Coca",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Peróxido de hidrógeno",
+      "Pistola de combate",
+      "Pistola vintage",
+      "Planta de peyotes",
+      "Propileno",
+      "Silenciador"
+    ]
   },
   "robo a almacen|motero": {
     "img": "https://cdn.gtahub.gg/misionrobo2.png",
     "pts": 3,
     "req": "Planos arquitectónicos",
     "desc": "Dirígete a un almacén al cual puedes ingresar para robar lo que encuentres de valor en su interior para luego venderlo y obtener tu ganancia.",
-    "loot": []
+    "loot": [
+      "Amplificador de suelo",
+      "Balas de Pistola",
+      "Bate de Beisbol",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Collar de perlas",
+      "Conjunto de anillos",
+      "Empuñadura",
+      "Joyero \"Silver & Golden\"",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Microondas blanco",
+      "Mira compacta",
+      "Navaja",
+      "Pintura \"Pileta\"",
+      "Pistola de combate",
+      "Pistola vintage",
+      "Reloj de oro",
+      "Reloj de plata",
+      "Silenciador",
+      "Spray",
+      "Televisor \"LCD\"",
+      "Torre de PC"
+    ]
   },
   "robo a negocio|motero": {
     "img": "https://cdn.gtahub.gg/missions/robbusiness.png",
     "pts": 7,
     "req": "Tablet + Martillo + Plano arquitectónico",
     "desc": "Dirígete a un negocio al cual puedes ingresar para robar, lo que encuentres de valor en su interior puedes venderlo y obtener ganancias.",
-    "loot": []
+    "loot": [
+      "Caja con ropa",
+      "Caja de Redwood",
+      "Caja de Sinsimito",
+      "Caja de auriculares",
+      "Caja de champagne",
+      "Caja de laptop",
+      "Caja de televisión",
+      "Caja de teléfono",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Maletín con joyería",
+      "Mira compacta",
+      "Mostrador de anillos",
+      "Mostrador de brazaletes",
+      "Pendrive",
+      "Silenciador"
+    ]
   },
   "robo a motocicleta|motero": {
     "img": "https://cdn.gtahub.gg/missions/robmotorbike.png",
     "pts": 1,
-    "req": "Ninguno",
+    "req": "Conducir con precaución (no romper la moto)",
     "desc": "Deberás ir en búsqueda de una moto para robarla y luego entregarla a un contacto de venta rápida. Conduce con precaución, si rompes el vehículo el contacto no te dará el dinero.",
-    "loot": []
+    "loot": [
+      "$1,500 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "busqueda de contenedores|motero": {
     "img": "https://cdn.gtahub.gg/missions/searchcontainer.png",
@@ -737,116 +820,350 @@
     "req": "Un taladro",
     "desc": "Deberás ir en búsqueda de mercancía, esta se ha camuflado entre contenedores para no levantar sospechas, hazte con su contenido lo antes posible, así no se lo roban.",
     "loot": [
-      "Hojas de coca",
+      "Balas de Pistola",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
       "Gas butano",
-      "Botella de Peróxido",
-      "Botella de Acetona",
-      "Cajas de munición"
+      "Hojas de Coca",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Peróxido de hidrógeno",
+      "Propileno",
+      "Silenciador"
     ]
   },
   "reparto de quimicos|motero": {
     "img": "https://cdn.gtahub.gg/missions/chemicals.png",
     "pts": 10,
     "req": "3 tipos de químicos: Tarro de mezcla (Pandilla), Hojas de coca (Moteros), Yodo (Grupos)",
-    "desc": "El contacto se ha quedado sin químicos para seguir con la producción. Consigue los 3 químicos comprándoselos a otras organizaciones y llévalos al punto indicado.",
-    "loot": []
+    "desc": "El contacto se ha quedado sin químicos para seguir con la producción. Te ha enviado la lista de productos que necesita para continuar. Consíguelos todos y luego lleváselos al punto indicado.",
+    "loot": [
+      "$2,000 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "mision de trafico ilegal (avanzado)|motero": {
     "img": "https://cdn.gtahub.gg/mission-mco2.jpg",
     "pts": 2,
-    "req": "Nivel de organización avanzado",
+    "req": "Actividad avanzada de Organización",
     "desc": "Deberás ir en búsqueda de la carga, encontrarla lo más rápido para tomarla, llevarla a salvo hasta su punto de entrega y luego reclamar la recompensa que lleve dentro.",
-    "loot": []
+    "loot": [
+      "Balas de Escopeta",
+      "Balas de Pistola",
+      "Balas de Subfusil",
+      "Caja plastica de munición",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Hacha de combate",
+      "Jeringa de Heroina",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Machete",
+      "Mira compacta",
+      "Pistola de combate",
+      "Silenciador",
+      "Tarjeta de acceso"
+    ]
   },
   "trafico naval (avanzado)|motero": {
     "img": "https://cdn.gtahub.gg/mission-naval.jpg",
-    "pts": 3,
-    "req": "Nivel de organización avanzado",
+    "pts": 5,
+    "req": "Actividad avanzada de Organización",
     "desc": "Deberás ir en búsqueda de una lancha, encontrarla lo antes posible y llevarla hasta el punto de entrega.",
-    "loot": []
+    "loot": [
+      "Balas de Asalto",
+      "Balas de Pistola",
+      "Balas de Subfusil",
+      "Bismuto",
+      "Bolsa de Extasis",
+      "Caja de madera para munición",
+      "Caja de municiones",
+      "Cargador ampliado",
+      "Cargador de Luger P08",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Gas butano",
+      "Hacha de combate",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Machete",
+      "Mira compacta",
+      "Pistola Compacta",
+      "Pistola de combate",
+      "Scanner de área",
+      "Silenciador",
+      "USP Compact"
+    ]
   },
   "arrasa con sus vehiculos|motero": {
     "img": "https://cdn.gtahub.gg/missions/missionQuemar.png",
     "pts": 10,
     "req": "3x Bidones de combustible (Gasolinera)",
     "desc": "El contacto indica que busques y encuentres las ubicaciones de algunos coches enemigos y los reduzcas a cenizas.",
-    "loot": []
+    "loot": [
+      "$2,200 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "mantenimiento de maquinas de lavado|motero": {
     "img": "https://cdn.gtahub.gg/missions/missionMachine.png",
     "pts": 20,
-    "req": "2x Botella de Peróxido (Tráficos) + 2x Botella de Acetona (Tráficos) + 2x Botella de Aceite (Gasolinera)",
+    "req": "2x Botellas Peróxido + 2x Botellas Acetona + 2x Botellas Aceite",
     "desc": "El contacto avisa que el almacén de las máquinas de blanqueo de dinero necesitan un mantenimiento. Ayúdale con este trabajo.",
-    "loot": []
+    "loot": [
+      "$3,700 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "trafico multiple|motero": {
     "img": "https://cdn.gtahub.gg/missions/traficoMultiple.png",
     "pts": 5,
-    "req": "Ninguno",
-    "desc": "El contacto ha señalado varios lugares donde podrían estar los vehículos. Tu objetivo es encontrarlos, robarlos y entregarlos en el punto indicado. Cuidado, otros grupos también los están buscando.",
-    "loot": []
+    "req": "Encontrar y robar varios vehículos (Competitivo)",
+    "desc": "El contacto ha señalado varios lugares donde podrían estar los vehículos. Tu objetivo es encontrarlos, robarlos y entregarlos en el punto indicado.",
+    "loot": [
+      "Acetona",
+      "Balas de Pistola",
+      "Bate de Beisbol",
+      "Bismuto",
+      "Bolsa de Cocaína",
+      "Bolsa de Extasis",
+      "Bolsa de Meta rebajada",
+      "Bong de Marihuana",
+      "Botella rota",
+      "Caja de municiones",
+      "Caja metálica para armas",
+      "Cuchillo",
+      "Daga",
+      "Disolvente industrial",
+      "Filtro para droga",
+      "Gas butano",
+      "Hacha de combate",
+      "Hojas de Coca",
+      "Jeringa de Heroina",
+      "Machete",
+      "Manopla",
+      "Meta de alta pureza",
+      "Navaja",
+      "Peróxido de hidrógeno",
+      "Peyote",
+      "Pistola Compacta",
+      "Pistola de combate",
+      "Pistola vintage",
+      "Propileno",
+      "Pseudoefedrina",
+      "Químicos cristalizados",
+      "Taco de pool",
+      "Tec-9",
+      "Tolueno",
+      "Tusi",
+      "Yodo",
+      "LSD"
+    ]
   },
   "trafico de organos|motero": {
     "img": "https://cdn.gtahub.gg/missions/traficoDeOrganos.png",
     "pts": 10,
-    "req": "Ninguno",
-    "desc": "El contacto ha identificado varios lugares donde se almacenan órganos valiosos. Tu misión es robarlos antes de que se pierdan. Debes ser rápido, eficiente y discreto.",
-    "loot": []
+    "req": "Extracción rápida y discreta",
+    "desc": "El contacto ha identificado varios lugares donde se almacenan órganos valiosos. Tu misión es clara: robarlos antes de que se pierdan. Debes ser rápido, eficiente y discreto.",
+    "loot": [
+      "Corazón humano",
+      "Hígado humano",
+      "Páncreas humano",
+      "Pulmón humano",
+      "Riñón humano",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "mantenimiento de secuestrado (npc)|motero": {
     "img": "https://cdn.gtahub.gg/missions/fotoSecuestroNpc.png",
     "pts": 10,
-    "req": "Ninguno",
-    "desc": "Tu tarea es simple, pero peligrosa: mantener con vida a un objetivo secuestrado durante 7 días. Este individuo tiene información crucial que debe ser extraída, pero tendrás que garantizar su supervivencia.",
-    "loot": []
+    "req": "Mantener con vida durante 7 días",
+    "desc": "Tu tarea es simple, pero peligrosa: mantener con vida a un objetivo secuestrado durante 7 días para extraer información crucial.",
+    "loot": [
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "busqueda acuatica|motero": {
     "img": "https://cdn.gtahub.gg/missions/fotoAcuaticSearch.webp",
     "pts": 5,
-    "req": "1x Escáner de área (Tráfico)",
-    "desc": "Se han interceptado señales extrañas procedentes de varios puntos del mar relacionadas con un antiguo cargamento perdido. Dirígete a las coordenadas, escanea la zona y prepárate para bucear.",
-    "loot": []
+    "req": "1x Escáner de área (Tráficos)",
+    "desc": "El contacto indica que se han interceptado señales extrañas procedentes de varios puntos del mar relacionadas con un antiguo cargamento perdido.",
+    "loot": [
+      "Balas de Pistola",
+      "Botella rota",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Colt SCAMP",
+      "Daga",
+      "Disolvente industrial",
+      "Empuñadura",
+      "Gas butano",
+      "Jeringa de Heroina",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Pistola Compacta",
+      "Pistola de combate",
+      "Químicos cristalizados",
+      "Silenciador"
+    ]
   },
+
+  // --- PANDILLA ---
   "roba un vehiculo|pandilla": {
     "img": "https://cdn.gtahub.gg/mission-robv.jpg",
-    "pts": 10,
-    "req": "Tarjeta de hackeo nivel 1 o Ganzúa",
-    "desc": "Deberás ir en búsqueda de un vehículo para robarlo y luego entregarlo en el punto indicado.",
-    "loot": []
+    "pts": 1,
+    "req": "Robar y entregar vehículo rápido",
+    "desc": "Deberás ir en busqueda de un vehículo para robarlo y luego entregarlo a un contacto de venta rápida.",
+    "loot": [
+      "$1,300 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "roba la camioneta de la pintureria|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/mission-trafick-gang.png",
-    "pts": 5,
-    "req": "Ninguno",
-    "desc": "Localiza la camioneta de la pinturería enemiga, róbala y llévala a salvo al punto de entrega.",
-    "loot": []
+    "pts": 12,
+    "req": "Robar y saquear camioneta de pinturas",
+    "desc": "Deberás ir en búsqueda de una camioneta perteneciente a una empresa de pinturas, llevártela y tomar lo que hay en su maletero.",
+    "loot": [
+      "Balas de Pistola",
+      "Bate de Beisbol",
+      "Caja con botellas",
+      "Caja de Droga",
+      "Caja de plástico blanca",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Daga",
+      "Destornillador",
+      "Empuñadura",
+      "Kit de pintura",
+      "Lata de spray vacio",
+      "Linterna táctica",
+      "Manopla",
+      "Maza de acero",
+      "Mira compacta",
+      "Pistola vintage",
+      "Porro",
+      "Silenciador",
+      "Spray",
+      "Tolueno",
+      "Yodo"
+    ]
   },
   "robo de propiedad|pandilla": {
     "img": "https://cdn.gtahub.gg/misionrobo1.png",
-    "pts": 7,
-    "req": "Ganzúa nivel 1 o Ganzúa nivel 2",
-    "desc": "Dirígete a una propiedad a la cual puedes ingresar para robar lo que encuentres de valor en su interior.",
-    "loot": []
+    "pts": 11,
+    "req": "Planos arquitectónicos",
+    "desc": "Dirígete a una propiedad a la cual puedes ingresar para robar lo que encuentres de valor en su interior para luego venderlo y obtener tu ganancia.",
+    "loot": [
+      "Amplificador de suelo",
+      "Balas de Pistola",
+      "Bate de Beisbol",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Collar de perlas",
+      "Conjunto de anillos",
+      "Empuñadura",
+      "Joyero \"Silver & Golden\"",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Microondas blanco",
+      "Mira compacta",
+      "Navaja",
+      "Pintura \"Pileta\"",
+      "Pistola de combate",
+      "Pistola vintage",
+      "Reloj de oro",
+      "Reloj de plata",
+      "Silenciador",
+      "Spray",
+      "Televisor \"LCD\"",
+      "Torre de PC"
+    ]
   },
   "robo a negocio|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/robbusiness.png",
     "pts": 7,
     "req": "Tablet + Martillo + Plano arquitectónico",
-    "desc": "Dirígete a un negocio al cual puedes ingresar para robar lo que encuentres de valor en su interior.",
-    "loot": []
+    "desc": "Dirígete a un negocio a la cual puedes ingresar para robar, lo que encuentres de valor en su interior puedes venderlo y obtener ganancias.",
+    "loot": [
+      "Caja con ropa",
+      "Caja de Redwood",
+      "Caja de Sinsimito",
+      "Caja de auriculares",
+      "Caja de champagne",
+      "Caja de laptop",
+      "Caja de televisión",
+      "Caja de teléfono",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Maletín con joyería",
+      "Mira compacta",
+      "Mostrador de anillos",
+      "Mostrador de brazaletes",
+      "Pendrive",
+      "Silenciador"
+    ]
   },
   "busqueda de contenedores|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/searchcontainer.png",
-    "pts": 10,
+    "pts": 7,
     "req": "Un taladro",
-    "desc": "Deberás ir en búsqueda de mercancía camuflada entre contenedores. Hazte con su contenido lo antes posible.",
+    "desc": "Deberás ir en búsqueda de mercancía camuflada entre contenedores para no levantar sospechas, hazte con su contenido lo antes posible.",
     "loot": [
       "Bandejas de pintura",
       "Tarro de pintura azul",
       "Tarro de pintura roja",
       "Tarro de mezcla",
       "Spray de pintura",
-      "Maza de acero"
+      "Maza de acero",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "cuidado de la plantacion (dia 1)|pandilla": {
@@ -855,7 +1172,14 @@
     "req": "Un rociador + Guardar Fotografía de \"Planta pequeña\"",
     "desc": "Riega y fertiliza tus plantas. Recuerda guardar bien la fotografía que obtendrás, sin esta NO podrás reclamar tu recompensa al finalizar la semana.",
     "loot": [
-      "Fotografía de \"Planta pequeña\""
+      "Fotografía de \"Planta pequeña\"",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "cuidado de plantacion (dia 1)|pandilla": {
@@ -864,7 +1188,14 @@
     "req": "Un rociador + Guardar Fotografía de \"Planta pequeña\"",
     "desc": "Riega y fertiliza tus plantas. Recuerda guardar bien la fotografía que obtendrás, sin esta NO podrás reclamar tu recompensa al finalizar la semana.",
     "loot": [
-      "Fotografía de \"Planta pequeña\""
+      "Fotografía de \"Planta pequeña\"",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "cuidado de la plantacion (dia 2)|pandilla": {
@@ -873,7 +1204,14 @@
     "req": "Un rociador + Guardar Fotografía de \"Planta mediana\"",
     "desc": "Continúa manteniendo tus plantas y enciende el sistema de riego. Recuerda guardar la fotografía que obtendrás.",
     "loot": [
-      "Fotografía de \"Planta mediana\""
+      "Fotografía de \"Planta mediana\"",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "cuidado de plantacion (dia 2)|pandilla": {
@@ -882,7 +1220,14 @@
     "req": "Un rociador + Guardar Fotografía de \"Planta mediana\"",
     "desc": "Continúa manteniendo tus plantas y enciende el sistema de riego. Recuerda guardar la fotografía que obtendrás.",
     "loot": [
-      "Fotografía de \"Planta mediana\""
+      "Fotografía de \"Planta mediana\"",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "cuidado de la plantacion (dia 3)|pandilla": {
@@ -891,7 +1236,14 @@
     "req": "Un rociador + Guardar Fotografía de \"Planta grande\"",
     "desc": "Tus plantas habrán crecido aún más. Mantén tus plantas y documenta el progreso. Recuerda guardar la fotografía que obtendrás.",
     "loot": [
-      "Fotografía de \"Planta grande\""
+      "Fotografía de \"Planta grande\"",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "cuidado de plantacion (dia 3)|pandilla": {
@@ -900,82 +1252,238 @@
     "req": "Un rociador + Guardar Fotografía de \"Planta grande\"",
     "desc": "Tus plantas habrán crecido aún más. Mantén tus plantas y documenta el progreso. Recuerda guardar la fotografía que obtendrás.",
     "loot": [
-      "Fotografía de \"Planta grande\""
+      "Fotografía de \"Planta grande\"",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "dia de la recompensa|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/weedcarereward.png",
     "pts": 100,
     "req": "Llevar las 3 fotografías de los días anteriores (Lun, Mié, Vie)",
-    "desc": "Entrega las 3 fotografías acumuladas durante la semana para cobrar la cosecha final de la plantación.",
+    "desc": "Presenta las fotos que tomaste de tu progreso en las tres etapas anteriores para recibir la gran recompensa semanal.",
     "loot": [
-      "Cargamento de Marihuana / Cogollos"
+      "$16,000 en efectivo",
+      "Cargamento de Marihuana / Cogollos",
+      "Bong de Marihuana",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "dia de recompensa|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/weedcarereward.png",
     "pts": 100,
     "req": "Llevar las 3 fotografías de los días anteriores (Lun, Mié, Vie)",
-    "desc": "Entrega las 3 fotografías acumuladas durante la semana para cobrar la cosecha final de la plantación.",
+    "desc": "Presenta las fotos que tomaste de tu progreso en las tres etapas anteriores para recibir la gran recompensa semanal.",
     "loot": [
-      "Cargamento de Marihuana / Cogollos"
+      "$16,000 en efectivo",
+      "Cargamento de Marihuana / Cogollos",
+      "Bong de Marihuana",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
     ]
   },
   "reparto de quimicos|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/chemicals.png",
     "pts": 10,
-    "req": "3 tipos de químicos: Tarro de mezcla (Pandilla), Hojas de coca (Moteros), Yodo (Grupos)",
-    "desc": "El contacto se ha quedado sin químicos para seguir con la producción. Consíguelos todos y luego lleváselos al punto indicado.",
-    "loot": []
+    "req": "Tarro de pintura azul (Pandilla) + Hojas de coca (MotorClub) + Gas butano (Grupos)",
+    "desc": "El contacto se ha quedado sin químicos para seguir con la producción. Consíguelos comprándolos a otras organizaciones y llévaselos al punto.",
+    "loot": [
+      "$2,000 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "mision de trafico ilegal (avanzado)|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/itemtrafickinggangoficial.jpg",
     "pts": 2,
-    "req": "Nivel de organización avanzado",
-    "desc": "Deberás ir en búsqueda de la carga de armas/suministros, tomarla y llevarla a salvo al punto de entrega.",
-    "loot": []
+    "req": "Actividad avanzada de Pandilla",
+    "desc": "Búsqueda de la carga, tomarla lo más rápido y llevarla a salvo al punto de entrega.",
+    "loot": [
+      "Balas de Escopeta",
+      "Balas de Pistola",
+      "Bate de Beisbol",
+      "Bidon de aceite",
+      "Caja de Droga",
+      "Caja de madera para armas",
+      "Caja de municiones",
+      "Caja de plástico blanca",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Desfibrilador casero",
+      "Destornillador",
+      "Empuñadura",
+      "Escopeta Striker",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Manopla",
+      "Maza de acero",
+      "Mira compacta",
+      "Navaja",
+      "Pistola vintage",
+      "Porro",
+      "Scanner de área",
+      "Silenciador",
+      "Soplete",
+      "Spray"
+    ]
   },
   "arrasa con sus vehiculos|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/missionQuemar.png",
     "pts": 10,
     "req": "3x Bidones de combustible (Gasolinera)",
     "desc": "Busca y encuentra las ubicaciones de los coches enemigos y redúcelos a cenizas.",
-    "loot": []
+    "loot": [
+      "$2,200 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "mantenimiento de maquinas de lavado|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/missionMachine.png",
     "pts": 20,
-    "req": "2x Peróxido + 2x Acetona + 2x Aceite",
-    "desc": "Mantenimiento del almacén de las máquinas de blanqueo de dinero.",
-    "loot": []
+    "req": "2x Botellas Peróxido + 2x Botellas Acetona + 2x Botellas Aceite",
+    "desc": "El almacén de las máquinas de blanqueo de dinero necesita mantenimiento. Ayúdale con este trabajo.",
+    "loot": [
+      "$3,700 en efectivo",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "trafico multiple|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/traficoMultiple.png",
     "pts": 5,
-    "req": "Ninguno",
-    "desc": "Encuentra, roba y entrega varios vehículos en los puntos indicados.",
-    "loot": []
+    "req": "Encontrar y robar varios vehículos (Competitivo)",
+    "desc": "El contacto ha señalado varios lugares donde podrían estar los vehículos. Roba y entrega antes que otros grupos.",
+    "loot": [
+      "Acetona",
+      "Balas de Pistola",
+      "Bate de Beisbol",
+      "Bismuto",
+      "Bolsa de Cocaína",
+      "Bolsa de Extasis",
+      "Bolsa de Meta rebajada",
+      "Bong de Marihuana",
+      "Botella rota",
+      "Caja de municiones",
+      "Caja metálica para armas",
+      "Cuchillo",
+      "Daga",
+      "Disolvente industrial",
+      "Filtro para droga",
+      "Gas butano",
+      "Hacha de combate",
+      "Hojas de Coca",
+      "Jeringa de Heroina",
+      "Machete",
+      "Manopla",
+      "Meta de alta pureza",
+      "Navaja",
+      "Peróxido de hidrógeno",
+      "Peyote",
+      "Pistola Compacta",
+      "Pistola de combate",
+      "Pistola vintage",
+      "Propileno",
+      "Pseudoefedrina",
+      "Químicos cristalizados",
+      "Taco de pool",
+      "Tec-9",
+      "Tolueno",
+      "Tusi",
+      "Yodo",
+      "LSD"
+    ]
   },
   "trafico de organos|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/traficoDeOrganos.png",
     "pts": 10,
-    "req": "Ninguno",
-    "desc": "Roba los órganos valiosos almacenados antes de que se pierdan.",
-    "loot": []
+    "req": "Extracción rápida y discreta",
+    "desc": "Lugares identificados donde se almacenan órganos valiosos. Robarlos antes de que se pierdan.",
+    "loot": [
+      "Corazón humano",
+      "Hígado humano",
+      "Páncreas humano",
+      "Pulmón humano",
+      "Riñón humano",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "mantenimiento de secuestrado (npc)|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/fotoSecuestroNpc.png",
     "pts": 10,
-    "req": "Ninguno",
-    "desc": "Mantener con vida a un objetivo secuestrado durante 7 días para extraer su información.",
-    "loot": []
+    "req": "Mantener con vida durante 7 días",
+    "desc": "Garantizar la supervivencia del objetivo secuestrado durante 7 días bajo tu vigilancia.",
+    "loot": [
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Empuñadura",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Silenciador"
+    ]
   },
   "busqueda acuatica|pandilla": {
     "img": "https://cdn.gtahub.gg/missions/fotoAcuaticSearch.webp",
     "pts": 5,
-    "req": "1x Escáner de área",
-    "desc": "Dirígete a las coordenadas marcadas en el mar, escanea la zona y bucea por el cargamento.",
-    "loot": []
+    "req": "1x Escáner de área (Tráficos)",
+    "desc": "Señales extrañas procedentes de varios puntos del mar. Dirígete a las coordenadas marcadas, escanea la zona y bucea.",
+    "loot": [
+      "Balas de Pistola",
+      "Botella rota",
+      "Cargador ampliado",
+      "Cargador de tambor",
+      "Colt SCAMP",
+      "Daga",
+      "Disolvente industrial",
+      "Empuñadura",
+      "Gas butano",
+      "Jeringa de Heroina",
+      "Kit de pintura",
+      "Linterna táctica",
+      "Mira compacta",
+      "Pistola Compacta",
+      "Pistola de combate",
+      "Químicos cristalizados",
+      "Silenciador"
+    ]
   },
   "roba un vehiculo|grupo": {
     "img": "https://cdn.gtahub.gg/mission-robv.jpg",
